@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <Icon src="appunti.png" alt="Topic" link="/topics" />
+    <Icon src="topics.png" alt="Topic" link="/topics" />
     <Icon src="codebase.png" alt="Codebase" link="/codebase" />
   </div>
 </template>
@@ -27,4 +27,5 @@ export default {
   background-color: #56614fb7; /* Cambia il colore di sfondo specifico per questa vista */
   min-height: 100vh; /* Assicura che il colore di sfondo copra l'intera altezza della vista */
 }
+
 </style>

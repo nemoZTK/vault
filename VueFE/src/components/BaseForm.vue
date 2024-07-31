@@ -2,9 +2,12 @@
   <div class="form-container" @mousemove="handleMouseMove" @mouseleave="handleMouseLeave">
     <h2>{{ title }}</h2>
     <form @submit.prevent="submit">
-      <slot></slot>
+      <slot name="form-fields"></slot> <!-- Slot per i campi del modulo -->
       <button type="submit">{{ submitButtonText }}</button>
       <button type="button" @click="closeForm">Annulla</button>
+      <div class="footer-slot">
+      <slot name="footer"></slot> <!-- Slot per i pulsanti di cambio modulo -->
+      </div>
     </form>
     <!-- Elemento per l'effetto hover -->
     <div class="hover-effect" ref="hoverEffect"></div>
@@ -31,32 +34,44 @@ export default {
   },
 };
 </script>
-
 <style scoped>
+
+.form-container .footer-slot {
+  margin-top: -1rem;
+  font-size: 1rem; /* Dimensione del testo del footer */
+  text-align: center; /* Allinea il testo al centro */
+  white-space: nowrap;
+  font-weight: bold;
+}
 /* Stili del contenitore del modulo */
-.form-container {
+.form-container {/*questo dovrebbe stare sopra*/
   
-  position: relative;
+  position: fixed;
   color: var(--menu-title-color);
   background-color: var(--menu-primary-color);
   padding: 2rem;
   backdrop-filter: blur(10px);
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  max-width: 600px;
+  height:min-content;
+  width: 25%;
+  pointer-events: auto; /* Permette l'interazione */
   margin: auto;
   overflow: hidden; /* Assicura che l'effetto hover non esca dal contenitore */
 }
+.form-container h2 {
+  margin-top: -1rem;
+}
 
 form {
-  
+
   display: flex;
   flex-direction: column;
 }
 
 input {
 
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.6rem;
   padding: 0.75rem;
   font-size: 1rem;
   color: var(--menu-title-color);
@@ -70,7 +85,7 @@ input::placeholder {
 }
 
 button {
-  margin-top: 1rem;
+  margin-top: 0.6rem;
   padding: 0.75rem 1.5rem;
   background: var(--menu-btn-color);
   border: none;
@@ -82,5 +97,17 @@ button {
 
 button:hover {
   background: var(--menu-btn-hover-color);
+}
+@media (max-width: 768px) {
+ 
+  .form-container {
+  
+  max-width: max-content;
+  width: min-content;
+  height: min-content;
+
+
+}
+
 }
 </style>

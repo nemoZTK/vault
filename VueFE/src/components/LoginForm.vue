@@ -1,7 +1,12 @@
 <template>
-  <BaseForm title="Login" submitButtonText="Conferma" @submit="login" @close="$emit('close')">
-    <input type="text" v-model="username" placeholder="Username" required />
-    <input type="password" v-model="password" placeholder="Password" required />
+  <BaseForm title="Login" submitButtonText="Conferma" @submit="login" @close="hideForm">
+    <template v-slot:form-fields>
+      <input type="text" v-model="username" placeholder="Username" required />
+      <input type="password" v-model="password" placeholder="Password" required />
+    </template>
+    <template v-slot:footer>
+      <p>Non hai un account? <button type="button" @click="switchToRegister">Registrati</button></p>
+    </template>
   </BaseForm>
 </template>
 
@@ -21,6 +26,17 @@ export default {
       // Logica di login
       this.$emit('close');
     },
+    hideForm() {
+      this.$emit('close');
+    },
+    switchToRegister() {
+      this.$emit('switch-form', 'register');
+    }
   },
 };
 </script>
+<style scoped>
+.form-container .footer-slot button{
+  margin-left: 1.55rem;
+}
+</style>

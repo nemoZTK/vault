@@ -3,8 +3,8 @@
     <Background />
     <Navbar @show-login="toggleForm('login')" @show-register="toggleForm('register')" @logout="logout" :is-logged-in="isLoggedIn" :username="username" />
     <div v-if="showForm" class="overlay">
-      <LoginForm v-if="currentForm === 'login'" @close="hideForm" />
-      <RegisterForm v-if="currentForm === 'register'" @close="hideForm" />
+      <LoginForm v-if="currentForm === 'login'" @close="hideForm" @switch-form="toggleForm" />
+      <RegisterForm v-if="currentForm === 'register'" @close="hideForm" @switch-form="toggleForm" />
     </div>
     <router-view></router-view>
   </div>
@@ -14,14 +14,14 @@
 import Navbar from './components/Navbar.vue';
 import LoginForm from './components/LoginForm.vue';
 import RegisterForm from './components/RegisterForm.vue';
-import Background from './components/Background.vue'; // Importa il nuovo componente
+import Background from './components/Background.vue';
 
 export default {
   components: {
     Navbar,
     LoginForm,
     RegisterForm,
-    Background // Registra il nuovo componente
+    Background
   },
   data() {
     return {
@@ -77,6 +77,9 @@ html, body {
   background: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
+  z-index: 2000;
   align-items: center;
+  pointer-events: none; /* Permette il pass-through degli eventi */
 }
+
 </style>

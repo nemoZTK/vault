@@ -10,5 +10,5 @@
     transform: scale(0);
     transition: transform 0.3s, opacity 0.3s; /* Transizione per un effetto più fluido */
     opacity: 0;
-    z-index: -1; /* Posiziona dietro altri elementi */
+    z-index: -1; 
   }
