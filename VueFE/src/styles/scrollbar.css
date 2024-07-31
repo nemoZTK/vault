@@ -1,0 +1,16 @@
+/* styles/scrollbar.css */
+.custom-scrollbar::-webkit-scrollbar {
+    
+    width: 12px; /* Larghezza della barra di scorrimento */
+  }
+  
+
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: var(--menu-btn-color); /* Colore della parte mobile della barra di scorrimento */
+    border-radius: 10px; /* Arrotondamento degli angoli della parte mobile */
+  }
+  
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background:var(--menu-btn-hover-color); /* Colore della parte mobile quando si passa sopra con il mouse */
+  }

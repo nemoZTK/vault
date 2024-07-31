@@ -1,0 +1,135 @@
+/* Stile della navbar */
+.navbar {
+    position: fixed;
+    top: 1rem;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--menu-primary-color);
+    color: white;
+    padding: 0.5rem 1rem;
+    backdrop-filter: blur(40px);
+    border-radius: 10px;
+    box-shadow: 0 4px 3px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    overflow: hidden;
+    margin-left: 0.7vw;
+    margin-right: 0.7vw;
+    max-width: calc(100% - 1.4vw);
+    transition: padding 0.3s ease, margin-left 0.3s ease;
+  }
+  
+  /* Stile del div col titolo nella navbar */
+  .navbar-brand {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+    transition: justify-content 0.3s ease;
+  }
+  
+  /* Stile della scritta in navbar */
+  .navbar-brand a {
+    color: var(--menu-title-color);
+    font-size: 2rem;
+    letter-spacing: 8.5rem;
+    max-width: 100%;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: letter-spacing 0.3s ease, transform 0.3s ease;
+  }
+  
+  /* Riduzione del letter spacing quando non siamo sulla home */
+  .navbar-brand a.compressed {
+    letter-spacing: 1.9rem;
+    margin-right: 39rem;
+    transform: translateX(-10px);
+  }
+  .navbar-search {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex: 1;   
+    justify-content: flex-start;
+    margin-left: -38rem; 
+    margin-right: 2.9rem;
+
+    margin-block-end: 0.4rem;   
+    transition: margin 0.3s ease, justify-content 0.3s ease;
+    /* Altre proprietà */
+  }
+  
+  
+    .navbar-search input {
+    height: 1.8rem;
+    padding: 0.5rem;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    flex: 1;
+  }
+  
+  .navbar-search button {
+    padding: 0.5rem;
+    background: var(--menu-btn-color);
+    margin-block-start: 0.45rem;
+    border: none;
+    border-radius: 5px;
+    color: var(--menu-title-color);
+    cursor: pointer;
+  }
+  
+  /* Stile del div con i tasti */
+  .navbar-menu {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    position: relative;
+    z-index: 1;
+  }
+  
+
+  
+/* Responsive design */
+@media (max-width: 768px) {
+    .navbar {
+      flex-direction: column;
+      align-items: flex-start;
+      padding: 0.5rem;
+    }
+  
+    .navbar-brand {
+      justify-content: flex-start;
+      width: 100%;
+    }
+  
+    .navbar-brand a {
+      font-size: 1.5rem;
+      letter-spacing: 0.3rem;
+    }
+  
+    .navbar-brand a.compressed {
+      letter-spacing: 0.3rem;
+      transform: none;
+    }
+  
+    .navbar-menu {
+      width: 100%;
+      justify-content: space-around;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+  
+    .navbar-menu button {
+      width: 100%;
+      text-align: center;
+    }
+  
+    .navbar-search {
+      width: 100%;
+      margin-top: 0.5rem;
+      margin-left: 0; /* Reset margin for smaller screens */
+      justify-content: center; /* Center the search bar in small screens */
+    }
+  }

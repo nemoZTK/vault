@@ -1,0 +1,14 @@
+/* Elemento per l'effetto hover */
+.hover-effect {
+    position: absolute;
+    pointer-events: none;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: var(--menu-hover-shadow); 
+    box-shadow: 1px 1px 60px 100px  var(--menu-hover-shadow);/* Ombra sfumata */
+    transform: scale(0);
+    transition: transform 0.3s, opacity 0.3s; /* Transizione per un effetto più fluido */
+    opacity: 0;
+    z-index: -1; /* Posiziona dietro altri elementi */
+  }

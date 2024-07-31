@@ -1,0 +1,15 @@
+:root {
+    --menu-primary-color:#dfc11563;/*rgba(255, 255, 0, 0.582); #ffcc00;*/
+    
+    --menu-hover-color: #ffcc0088;
+
+    --menu-placeholder-color: #333333;
+--menu-bkg-bar-color: rgba(255, 255, 255, 0.8);
+    --menu-title-color: #242424;
+
+    --menu-font-color: #333333;
+    --menu-btn-color:#aaaa;
+    --menu-btn-hover-color: rgb(235, 183, 14);
+
+    --menu-hover-shadow: rgba(230, 180, 19, 0.555);
+}
