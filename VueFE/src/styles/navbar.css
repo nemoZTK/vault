@@ -103,11 +103,13 @@
   
     .navbar-brand a {
       font-size: 1.5rem;
-      letter-spacing: 0.3rem;
+      margin-left: 4rem;
+      letter-spacing: 2.3rem;
     }
   
     .navbar-brand a.compressed {
-      letter-spacing: 0.3rem;
+      letter-spacing: 2.3rem;
+      margin-left:4rem;
       transform: none;
     }
   

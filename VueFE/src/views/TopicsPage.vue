@@ -28,5 +28,13 @@ export default {
 
   <style scoped>
   /* Stili specifici per la pagina Topics */
+  @media (max-width: 768px) {
+  .base-main-header-block h1 {
+        letter-spacing: 1.6rem;
+        padding: 0;
+        margin-bottom: 0.5rem;
+        margin-right: 14rem;
+    }
+  }
   </style>
   
