@@ -57,7 +57,7 @@ public class StorageService {
 			}
 		} else {
 			logger.warn("Folder already exists at: " + folder.getPath());
-			return false;
+			return true;
 		}
 	}
 
@@ -140,6 +140,7 @@ public class StorageService {
 		}
 		try {
 			createFolder(basePath + completePath);
+			logger.info("---saving-folder-in-db");
 			folderRepo.save(folder);
 		} catch (Exception e) {
 			e.printStackTrace();

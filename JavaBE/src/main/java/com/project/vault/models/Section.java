@@ -3,6 +3,7 @@ package com.project.vault.models;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -27,13 +28,14 @@ public class Section {
 	private Long id;
 
 	@ManyToOne
-	@JoinColumn(name = "vault_user_id")
+	@JoinColumn(name = "vault_user_id", nullable = false)
 	private VaultUser vaultUser;
 
 	@ManyToMany
 	@JoinTable(name = "section_space", joinColumns = @JoinColumn(name = "section_id"), inverseJoinColumns = @JoinColumn(name = "space_id"))
 	private List<Space> spaces;
 
+	@Column(nullable = false)
 	private String name;
 	private LocalDateTime createdAt;
 	private LocalDateTime updatedAt;

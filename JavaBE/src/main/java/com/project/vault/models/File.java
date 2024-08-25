@@ -2,6 +2,7 @@ package com.project.vault.models;
 
 import java.time.LocalDateTime;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -24,11 +25,11 @@ public class File {
 	private Long id;
 
 	@ManyToOne
-	@JoinColumn(name = "vault_user_id")
+	@JoinColumn(name = "vault_user_id", nullable = false)
 	private VaultUser vaultUser;
 
 	@ManyToOne
-	@JoinColumn(name = "space_id")
+	@JoinColumn(name = "space_id", nullable = false)
 	private Space space;
 
 	@ManyToOne
@@ -38,6 +39,8 @@ public class File {
 	@ManyToOne
 	@JoinColumn(name = "folder_id", nullable = true)
 	private Folder folder;
+
+	@Column(nullable = false)
 	private String name;
 	private String type;
 	private String extension;
