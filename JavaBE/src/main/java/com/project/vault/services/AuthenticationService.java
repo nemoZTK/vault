@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 import com.project.vault.models.VaultUser;
 import com.project.vault.repos.VaultUserRepository;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 @Service
 public class AuthenticationService {
 
@@ -33,10 +35,33 @@ public class AuthenticationService {
 	@Autowired
 	AuthenticationManager authMan;
 
+	@Autowired
+	StorageService folderServ;
+
 	private BCryptPasswordEncoder encoder;
 
 	public List<VaultUser> getAllUsers() {
 		return this.userRepo.findAll();
+	}
+
+	public VaultUser getUserById(Long id) throws Exception {
+		VaultUser user;
+		if (userRepo.findById(id).get() != null) {
+			user = userRepo.findById(id).get();
+			return user;
+		}
+		throw new Exception("user id not found " + id);
+
+	}
+
+	public Long getUserIdByUsername(String username) {
+		Long userId;
+		if (userRepo.findIdByUsername(username) != null) {
+			userId = userRepo.findIdByUsername(username);
+			return userId;
+		}
+		return null;
+
 	}
 
 	public record NewUserResponse(Boolean done, Long id) {
@@ -46,7 +71,9 @@ public class AuthenticationService {
 		encoder = new BCryptPasswordEncoder(rounds);
 		user.setCreatedAt(LocalDateTime.now());
 		user.setPassword(encoder.encode(user.getPassword()));
+		user.setPath("/" + user.getUsername());
 		try {
+			folderServ.createUserMainFolder(user.getPath());
 			VaultUser savedUser = userRepo.save(user);
 			logger.info("New user '{}' saved in DB", user.getUsername());
 			return new NewUserResponse(true, savedUser.getId());
@@ -64,6 +91,17 @@ public class AuthenticationService {
 		} else {
 			return "fail";
 		}
+	}
+
+	public Boolean getTokenAndValidateRequestByUsername(String username, HttpServletRequest req) {
+		String token = req.getHeader("Authorization");
+		if (token.startsWith("Bearer ")) {
+			token = token.substring(7);
+		}
+		if (JWTServ.validateToken(token, username)) {
+			return true;
+		}
+		return false;
 	}
 
 }

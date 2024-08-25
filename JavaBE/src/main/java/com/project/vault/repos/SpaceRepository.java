@@ -3,8 +3,9 @@ package com.project.vault.repos;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-// scelta del nome un pò infelice ma che vuoi farci haha
+import com.project.vault.models.Space;
+
 @Repository
-public interface RepoRepository extends JpaRepository<com.project.vault.models.VaultSpace, Long> {
+public interface SpaceRepository extends JpaRepository<Space, Long> {
 
 }

@@ -6,6 +6,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,10 +22,25 @@ public class File {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	private Long folderId;
+
+	@ManyToOne
+	@JoinColumn(name = "vault_user_id")
+	private VaultUser vaultUser;
+
+	@ManyToOne
+	@JoinColumn(name = "space_id")
+	private Space space;
+
+	@ManyToOne
+	@JoinColumn(name = "section_id", nullable = true)
+	private Section section;
+
+	@ManyToOne
+	@JoinColumn(name = "folder_id", nullable = true)
+	private Folder folder;
 	private String name;
-	private byte[] content;
 	private String type;
+	private String extension;
 	private String language;
 	private Long size;
 	private String path;

@@ -26,5 +26,16 @@ public class VaultUser {
 	private String password;
 	private String path;
 	private LocalDateTime createdAt;
+	// Relazioni implicite:
+	// @OneToMany(mappedBy = "vaultUser")
+	// private List<Space> spaces;
 
+	// @OneToMany(mappedBy = "vaultUser")
+	// private List<Folder> folders;
+
+	// @OneToMany(mappedBy = "vaultUser")
+	// private List<File> files;
+
+	// @OneToMany(mappedBy = "vaultUser")
+	// private List<Section> sections;
 }

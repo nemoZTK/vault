@@ -35,8 +35,13 @@ public class UsersController {
 
 	@PostMapping("/login")
 	public String login(@RequestBody VaultUser user) {
-		return authServ.verify(user);
+		Long requestUserId;
 
+		requestUserId = authServ.getUserIdByUsername(user.getUsername());
+		if (requestUserId != null) {
+			return requestUserId + "|" + authServ.verify(user);
+		}
+		return "wrong username or password";
 	}
 
 	@PostMapping("/logout")

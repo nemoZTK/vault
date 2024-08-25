@@ -22,14 +22,13 @@ public class MyDetailService implements UserDetailsService {
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		VaultUser user = userRepo.findByUsername(username);
-
-		if (user != null) {
+		VaultUser user;
+		if (userRepo.findByUsername(username).get() != null) {
+			user = userRepo.findByUsername(username).get();
 			logger.info("User '{}' found in the database", username);
 			return new UserPrincipal(user);
-		} else {
-			logger.error("Username '{}' not found in the database", username);
-			throw new UsernameNotFoundException("Username '" + username + "' not found in the database");
 		}
+		logger.error("Username '{}' not found in the database", username);
+		throw new UsernameNotFoundException("Username '" + username + "' not found in the database");
 	}
 }

@@ -6,6 +6,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,13 +22,27 @@ public class Folder {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	private Long sectionId;
-	private Long parentId;
+
+	@ManyToOne
+	@JoinColumn(name = "space_id")
+	private Space space;
+
+	@ManyToOne
+	@JoinColumn(name = "vault_user_id")
+	private VaultUser vaultUser;
+
+	@ManyToOne
+	@JoinColumn(name = "parent_folder_id", nullable = true)
+	private Folder parentFolder;
+
+	@ManyToOne
+	@JoinColumn(name = "section_id", nullable = true)
+	private Section section;
+
 	private String name;
 	private Long size;
 	private String path;
 	private LocalDateTime createdAt;
 	private LocalDateTime updatedAt;
 
-	// Getters and Setters
 }

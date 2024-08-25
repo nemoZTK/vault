@@ -10,6 +10,8 @@ import java.util.function.Function;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -22,18 +24,25 @@ import io.jsonwebtoken.security.Keys;
 public class JWTtokenService {
 	String secretKey;
 
-	public JWTtokenService() {
+	private final Logger logger = LoggerFactory.getLogger(getClass());
 
+	public JWTtokenService() {
+		logger.trace("building jwtTokenSevice...");
 		try {
 			KeyGenerator keyGen = KeyGenerator.getInstance("HmacSHA256");
 			SecretKey sk = keyGen.generateKey();
 			secretKey = Base64.getEncoder().encodeToString(sk.getEncoded());
 		} catch (NoSuchAlgorithmException e) {
+			logger.error("error building jwtTokenSevice");
+
 			throw new RuntimeException(e);
 		}
+		logger.trace("building jwtTokenSevice completed");
+
 	}
 
 	public String generateToken(String username) {
+		logger.info("generating token...");
 		Map<String, Object> claims = new HashMap<>();
 		return Jwts.builder().claims().add(claims).subject(username).issuedAt(new Date(System.currentTimeMillis()))
 				.expiration(new Date(System.currentTimeMillis() * 60 * 60 * 30)).and().signWith(getKey()).compact();
@@ -61,6 +70,11 @@ public class JWTtokenService {
 	public boolean validateToken(String token, UserDetails userDetails) {
 		final String userName = extractUsername(token);
 		return (userName.equals(userDetails.getUsername()) && !isTokenExpired(token));
+	}
+
+	public boolean validateToken(String token, String username) {
+		final String userName = extractUsername(token);
+		return (userName.equals(username) && !isTokenExpired(token));
 	}
 
 	private boolean isTokenExpired(String token) {
