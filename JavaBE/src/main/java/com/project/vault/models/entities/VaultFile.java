@@ -1,4 +1,4 @@
-package com.project.vault.models;
+package com.project.vault.models.entities;
 
 import java.time.LocalDateTime;
 
@@ -18,8 +18,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "files")
-public class File {
+@Table(name = "vault_files")
+public class VaultFile {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -29,16 +29,16 @@ public class File {
 	private VaultUser vaultUser;
 
 	@ManyToOne
-	@JoinColumn(name = "space_id", nullable = false)
-	private Space space;
+	@JoinColumn(name = "vault_space_id", nullable = false)
+	private VaultSpace space;
 
 	@ManyToOne
-	@JoinColumn(name = "section_id", nullable = true)
+	@JoinColumn(name = "vault_section_id", nullable = true)
 	private Section section;
 
 	@ManyToOne
-	@JoinColumn(name = "folder_id", nullable = true)
-	private Folder folder;
+	@JoinColumn(name = "vault_folder_id", nullable = true)
+	private VaultFolder folder;
 
 	@Column(nullable = false)
 	private String name;
@@ -49,6 +49,4 @@ public class File {
 	private String path;
 	private LocalDateTime createdAt;
 	private LocalDateTime updatedAt;
-
-	// Getters and Setters
 }

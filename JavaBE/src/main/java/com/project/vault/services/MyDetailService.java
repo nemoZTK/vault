@@ -9,7 +9,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.project.vault.models.UserPrincipal;
-import com.project.vault.models.VaultUser;
+import com.project.vault.models.entities.VaultUser;
 import com.project.vault.repos.VaultUserRepository;
 
 @Service

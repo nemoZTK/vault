@@ -1,4 +1,4 @@
-package com.project.vault.models;
+package com.project.vault.models.entities;
 
 import java.time.LocalDateTime;
 
@@ -18,33 +18,23 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "folders")
-public class Folder {
+@Table(name = "vault_spaces")
+public class VaultSpace {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@ManyToOne
-	@JoinColumn(name = "space_id", nullable = false)
-	private Space space;
-
-	@ManyToOne
 	@JoinColumn(name = "vault_user_id", nullable = false)
 	private VaultUser vaultUser;
 
-	@ManyToOne
-	@JoinColumn(name = "parent_folder_id", nullable = true)
-	private Folder parentFolder;
-
-	@ManyToOne
-	@JoinColumn(name = "section_id", nullable = true)
-	private Section section;
-
 	@Column(nullable = false)
 	private String name;
+	private String description;
+	private String type;
+
 	private Long size;
 	private String path;
 	private LocalDateTime createdAt;
 	private LocalDateTime updatedAt;
-
 }

@@ -1,4 +1,4 @@
-package com.project.vault.models;
+package com.project.vault.models.entities;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -21,7 +21,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "sections")
+@Table(name = "vault_sections")
 public class Section {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,13 +32,12 @@ public class Section {
 	private VaultUser vaultUser;
 
 	@ManyToMany
-	@JoinTable(name = "section_space", joinColumns = @JoinColumn(name = "section_id"), inverseJoinColumns = @JoinColumn(name = "space_id"))
-	private List<Space> spaces;
+	@JoinTable(name = "section_space", joinColumns = @JoinColumn(name = "vault_section_id"), inverseJoinColumns = @JoinColumn(name = "vault_space_id"))
+	private List<VaultSpace> spaces;
 
 	@Column(nullable = false)
 	private String name;
 	private LocalDateTime createdAt;
 	private LocalDateTime updatedAt;
 
-	// Getters and Setters
 }

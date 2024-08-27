@@ -13,7 +13,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.project.vault.models.VaultUser;
+import com.project.vault.models.entities.VaultUser;
 import com.project.vault.repos.VaultUserRepository;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -41,7 +41,11 @@ public class AuthenticationService {
 	private BCryptPasswordEncoder encoder;
 
 	public List<VaultUser> getAllUsers() {
-		return this.userRepo.findAll();
+		return userRepo.findAll();
+	}
+
+	public Boolean existById(Long id) {
+		return userRepo.existsById(id);
 	}
 
 	public VaultUser getUserById(Long id) throws Exception {
@@ -52,6 +56,10 @@ public class AuthenticationService {
 		}
 		throw new Exception("user id not found " + id);
 
+	}
+
+	public String getUsernameById(Long id) {
+		return userRepo.findUsernameById(id);
 	}
 
 	public Long getUserIdByUsername(String username) {
@@ -92,6 +100,10 @@ public class AuthenticationService {
 			return "fail";
 		}
 	}
+
+//	public String getPathById(Long id) {
+//		return "/" + userRepo.findUsernameById(id);
+//	}
 
 	public Boolean getTokenAndValidateRequestByUsername(String username, HttpServletRequest req) {
 		String token = req.getHeader("Authorization");
