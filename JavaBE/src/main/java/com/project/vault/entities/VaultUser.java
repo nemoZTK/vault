@@ -1,4 +1,4 @@
-package com.project.vault.models.entities;
+package com.project.vault.entities;
 
 import java.time.LocalDateTime;
 
@@ -28,6 +28,5 @@ public class VaultUser {
 	private String email;
 	@Column(nullable = false)
 	private String password;
-	private String path;
 	private LocalDateTime createdAt;
 }

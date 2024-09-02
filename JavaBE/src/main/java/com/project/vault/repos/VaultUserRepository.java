@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import com.project.vault.models.entities.VaultUser;
+import com.project.vault.entities.VaultUser;
 
 @Repository
 public interface VaultUserRepository extends JpaRepository<VaultUser, Long> {

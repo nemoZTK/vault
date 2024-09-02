@@ -1,7 +1,6 @@
 <template>
   <div class="home">
-    <Icon src="topics.png" alt="Topic" link="/topics" />
-    <Icon src="codebase.png" alt="Codebase" link="/codebase" />
+    <Icon src="folders.png" alt="Spaces" link="/spaces" />
   </div>
 </template>
 
@@ -9,6 +8,8 @@
 import Icon from '../components/Icon.vue';
 
 export default {
+  //<Icon src="topics.png" alt="Topic" link="/topics" />
+  
   components: {
     Icon
   },

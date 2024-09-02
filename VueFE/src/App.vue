@@ -4,13 +4,14 @@
     <Navbar @show-login="toggleForm('login')" @show-register="toggleForm('register')" @logout="logout" :is-logged-in="isLoggedIn" :username="username" />
     <div v-if="showForm" class="overlay">
       <LoginForm v-if="currentForm === 'login'" @close="hideForm" @switch-form="toggleForm" />
-      <RegisterForm v-if="currentForm === 'register'" @close="hideForm" @switch-form="toggleForm" />
+      <RegisterForm v-if="currentForm === 'register'" @close="hideForm" @switch-form="toggleForm" @registered="handleRegistration" />
     </div>
     <router-view></router-view>
   </div>
 </template>
 
 <script>
+import { mapState } from 'vuex';
 import Navbar from './components/Navbar.vue';
 import LoginForm from './components/LoginForm.vue';
 import RegisterForm from './components/RegisterForm.vue';
@@ -26,10 +27,11 @@ export default {
   data() {
     return {
       showForm: false,
-      currentForm: '',
-      isLoggedIn: false,
-      username: '',
+      currentForm: ''
     };
+  },
+  computed: {
+    ...mapState(['isLoggedIn', 'username']) // Mappa lo stato di Vuex
   },
   methods: {
     toggleForm(formType) {
@@ -45,9 +47,12 @@ export default {
       this.showForm = false;
       this.currentForm = '';
     },
+    handleRegistration(username) {
+      this.$store.commit('login', username);
+      this.hideForm();
+    },
     logout() {
-      this.isLoggedIn = false;
-      this.username = '';
+      this.$store.commit('logout');
     }
   }
 };

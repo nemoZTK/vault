@@ -1,4 +1,4 @@
-package com.project.vault.models.dto;
+package com.project.vault.models;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class FolderPathDTO {
-	String path;
+public class NameAndParentDTO {
+	String name;
 	Long parentId;
 }

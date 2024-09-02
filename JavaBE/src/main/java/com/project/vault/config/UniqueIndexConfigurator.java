@@ -16,9 +16,10 @@ public class UniqueIndexConfigurator implements InitializingBean {
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		jdbcTemplate.execute("CREATE UNIQUE INDEX IF NOT EXISTS unique_folder_name"
-				+ " ON vault_folders(name, parent_folder_id) NULLS NOT DISTINCT;");
+				+ " ON vault_folders(name, parent_folder_id, vault_space_id) NULLS NOT DISTINCT;");
+
 		jdbcTemplate.execute("CREATE UNIQUE INDEX IF NOT EXISTS unique_file_name "
-				+ "ON vault_files(name, vault_folder_id) NULLS NOT DISTINCT;");
+				+ "ON vault_files(name, parent_folder_id, vault_space_id)" + " NULLS NOT DISTINCT;");
 		jdbcTemplate.execute(
 				"CREATE UNIQUE INDEX IF NOT EXISTS unique_user_space_name " + "ON vault_spaces(vault_user_id, name);");
 
