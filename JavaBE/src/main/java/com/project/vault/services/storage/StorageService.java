@@ -1,7 +1,9 @@
 package com.project.vault.services.storage;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -121,6 +123,54 @@ public class StorageService implements StorageServiceInterface {
 		return null;
 	}
 
+	public List<VaultFolder> getFolderWithNullParentBySpaceId(Long spaceId) {
+		if (spaceRepo.existsById(spaceId)) {
+			List<VaultFolder> folders = folderRepo.findBySpaceIdAndParentFolderIsNull(spaceId);
+			for (VaultFolder folder : folders) {
+				folder.setSpace(null);
+				folder.setVaultUser(null);
+				folder.setSection(null);
+			}
+
+			return folders;
+		}
+		return null;
+	}
+
+	public List<VaultFile> getFileWithNullParentBySpaceId(Long spaceId) {
+		if (spaceRepo.existsById(spaceId)) {
+			List<VaultFile> files = fileRepo.findBySpaceIdAndParentFolderIsNull(spaceId);
+			for (VaultFile file : files) {
+				file.setSpace(null);
+				file.setVaultUser(null);
+				file.setSection(null);
+			}
+			return files;
+		}
+		return null;
+	}
+
+	public JSONObject getFileAndFolderWithParentNullBySpaceId(Long spaceId) {
+		List<VaultFile> files = getFileWithNullParentBySpaceId(spaceId);
+		List<VaultFolder> folders = getFolderWithNullParentBySpaceId(spaceId);
+		JSONObject response = new JSONObject();
+		JSONArray fileArray = new JSONArray();
+		if (files != null) {
+			for (VaultFile file : files) {
+				fileArray.put(new JSONObject(file));
+			}
+			response.put("files", fileArray);
+		}
+		JSONArray folderArray = new JSONArray();
+		if (folders != null) {
+			for (VaultFolder folder : folders) {
+				folderArray.put(new JSONObject(folder));
+			}
+			response.put("folders", folderArray);
+		}
+		return response;
+	}
+
 	public VaultFolder saveNewFolder(Long userId, Long spaceId, Long parentId, String name) {
 		VaultFolder folder = new VaultFolder();
 		Boolean isDone = false;
@@ -218,6 +268,15 @@ public class StorageService implements StorageServiceInterface {
 		}
 		logger.error("[" + id + "] not found you've passed a invalid file id.");
 		return null;
+
+	}
+
+	public List<VaultSpace> getSpaceListByUserId(Long userId) {
+		List<VaultSpace> spaces = spaceRepo.findByVaultUserId(userId);
+		for (VaultSpace space : spaces) {
+			space.setVaultUser(null);
+		}
+		return spaces;
 
 	}
 

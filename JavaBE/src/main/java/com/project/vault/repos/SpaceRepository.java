@@ -1,5 +1,7 @@
 package com.project.vault.repos;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,5 +16,7 @@ public interface SpaceRepository extends JpaRepository<VaultSpace, Long> {
 
 	@Query("SELECT EXISTS (SELECT 1 FROM VaultSpace s WHERE s.id = :spaceId AND s.vaultUser.id = :userId)")
 	boolean existsByIdAndUserId(@Param("spaceId") Long spaceId, @Param("userId") Long userId);
+
+	List<VaultSpace> findByVaultUserId(Long userId);
 
 }

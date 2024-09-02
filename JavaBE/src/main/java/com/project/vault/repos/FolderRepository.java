@@ -1,5 +1,7 @@
 package com.project.vault.repos;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -16,4 +18,6 @@ public interface FolderRepository extends JpaRepository<VaultFolder, Long> {
 
 	@Query("SELECT COUNT(f) > 0 FROM VaultFolder f WHERE f.id = :folderId AND f.vaultUser.id = :userId")
 	boolean existsByIdAndUserId(@Param("folderId") Long folderId, @Param("userId") Long userId);
+
+	List<VaultFolder> findBySpaceIdAndParentFolderIsNull(Long spaceId);
 }
