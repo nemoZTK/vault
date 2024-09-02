@@ -21,14 +21,10 @@
 
 
 <script>
+import { mapState } from 'vuex';
 import hoverEffect from '/src/utils/hoverEffect.js';
 
-
 export default {
-  props: {
-    isLoggedIn: Boolean,
-    username: String
-  },
   mixins: [hoverEffect],
   data() {
     return {
@@ -36,14 +32,20 @@ export default {
     };
   },
   computed: {
+    ...mapState({
+      isLoggedIn: state => state.isLoggedIn,
+      username: state => state.username
+    }),
     isHome() {
       return this.$route.path === '/';
     }
   },
   methods: {
     performSearch() {
-      // Placeholder per la logica di ricerca
       console.log('Ricerca eseguita per:', this.searchQuery);
+    },
+    logout() {
+      this.$store.commit('logout');
     }
   }
 };

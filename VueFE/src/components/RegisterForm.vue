@@ -11,70 +11,60 @@
     </template>
   </BaseForm>
 </template>
-<script>
-import axios from '../axios'; // Importa l'istanza axios configurata
-import BaseForm from './BaseForm.vue';
 
-export default {
+<script>
+import BaseForm from './BaseForm.vue';
+import axios from '../publicApiClient'; // Assicurati che questo percorso sia corretto
+
+export default {  
   components: { BaseForm },
   data() {
     return {
       username: '',
       email: '',
       password: '',
-      confirmPassword: '',
+      confirmPassword: ''
     };
   },
   methods: {
     async register() {
       if (this.password !== this.confirmPassword) {
-        alert("Le password non corrispondono");
+        alert('Le password non coincidono.');
         return;
       }
 
       try {
-        const response = await axios.post('/api/users/create', {
+        const response = await axios.post('/users/create', {
           username: this.username,
           email: this.email,
           password: this.password
         });
 
         if (response.status === 200) {
-          // Gestione della risposta di successo
           const { id, username, token } = response.data;
-          console.log('Registrazione avvenuta con successo:', { id, username, token });
-
-          // Puoi salvare il token nel localStorage se necessario
-          localStorage.setItem('token', token);
-
-          // Qui potresti fare altre operazioni come login, reindirizzamento, ecc.
-          this.$store.commit('login', { username, token });
-          this.$emit('registered', { username, token }); // Emesso evento registrazione con successo
+          localStorage.setItem('authToken', token);
+          console.log("done for ", username, id, token);
+          this.$store.commit('register', { username, id }); // Usa Vuex per aggiornare lo stato
           this.hideForm();
-        } else {
-          // Gestisci errore di registrazione
-          alert('Errore nella registrazione');
         }
       } catch (error) {
-        // Gestisci errore di rete o di backend
         if (error.response && error.response.status === 400) {
-          // Gestisci errore specifico di backend se necessario
-          alert('Errore di registrazione: dati non validi');
+          alert('Errore nella registrazione. Per favore, riprova.');
         } else {
-          console.error('Errore durante la registrazione:', error);
-          alert('Si è verificato un errore durante la registrazione');
+          console.error('Errore:', error);
         }
       }
     },
+    switchToLogin() {
+      this.$emit('switch-to-login');
+    },
     hideForm() {
       this.$emit('close');
-    },
-    switchToLogin() {
-      this.$emit('switch-form', 'login');
     }
-  },
+  }
 };
 </script>
+
 <style scoped>
 .form-container .footer-slot button {
   margin-left: 3.85rem;

@@ -1,4 +1,4 @@
-/* styles/scrollbar.css */
+/* src/styles/scrollbar.css */
 .custom-scrollbar::-webkit-scrollbar {
     
     width: 12px; /* Larghezza della barra di scorrimento */

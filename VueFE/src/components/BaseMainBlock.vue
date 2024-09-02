@@ -7,10 +7,10 @@
             </slot>
             <div class="base-main-buttons-block">
                 <Dropdown :items="dropdownItems" @item-selected="onDropdownItemSelected" />
-                <button class="grey-button">aggiungi</button>
+                <button class="grey-button" @click="$emit('add-new-space')">aggiungi</button>
             </div>
         </div>
-        <div class="content-block">
+        <div class="content-block custom-scrollbar">
             <slot></slot>
         </div>
     </div>
@@ -50,7 +50,7 @@ export default {
 </script>
 
 <style scoped>
-
+@import '@/styles/scrollbar.css';
 
 .base-main-container-block {
     background-color: var(--menu-primary-color);
@@ -74,6 +74,12 @@ export default {
     box-sizing: border-box;
     transition: padding 0.3s ease, margin 0.3s ease;
 }
+.content-block{
+    max-height: 50vh; /* Imposta l'altezza massima del blocco */
+  overflow-y: auto; /* Abilita lo scroll verticale quando necessario */
+  width: 100%; /* Puoi anche impostare una larghezza fissa se necessario */
+
+}
 
 .base-main-header-block {
     width: 100%;
@@ -82,6 +88,7 @@ export default {
     display: flex;
     align-items: center;
     box-sizing: border-box;
+
 }
 
 .base-main-header-block h1 {
@@ -129,4 +136,5 @@ export default {
     color: white;
     box-sizing: border-box;
 }
+
 </style>

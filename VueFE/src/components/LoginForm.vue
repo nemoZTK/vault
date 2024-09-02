@@ -12,6 +12,7 @@
 
 <script>
 import BaseForm from './BaseForm.vue';
+import axios from '../publicApiClient'; // Assicurati che il percorso sia corretto
 
 export default {
   components: { BaseForm },
@@ -22,9 +23,33 @@ export default {
     };
   },
   methods: {
-    login() {
-      // Logica di login
-      this.$emit('close');
+    async login() {
+      try {
+        // Invia una richiesta POST al server con username e password
+        const response = await axios.post('/users/login', {
+          username: this.username,
+          password: this.password
+        });
+
+        if (response.status === 200) {
+          // Recupera la risposta del server
+          const [id, token] = response.data.split('|');
+
+          // Memorizza l'ID, il token e l'username nel localStorage
+          localStorage.setItem('authToken', token);
+          localStorage.setItem('username', this.username);
+          localStorage.setItem('id', id);
+
+          // Aggiorna lo stato di Vuex
+          this.$store.commit('login', { username: this.username, id, token });
+
+          // Chiudi il modulo di login
+          this.hideForm();
+        }
+      } catch (error) {
+        console.error('Errore:', error);
+        alert('Errore durante il login. Per favore, riprova.');
+      }
     },
     hideForm() {
       this.$emit('close');

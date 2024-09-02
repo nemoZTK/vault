@@ -8,6 +8,10 @@ import './styles/dropdown.css';
 Vue.config.productionTip = true;
 
 new Vue({
-store,router,
+  store,
+  router,
   render: h => h(App),
+  created() {
+    this.$store.dispatch('initializeStore');
+  }
 }).$mount('#app');
