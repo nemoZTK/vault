@@ -61,6 +61,8 @@ public class StorageController {
 		return response.put("result", "bad credentials").toString();
 	}
 
+	// --------------------------------------------------------------------------------------------------------------------------------------------------
+
 	@PostMapping("/upload")
 	public String upload(@RequestParam(name = "userId", required = true) Long userId,
 			@RequestParam(name = "spaceId", required = true) Long spaceId,
@@ -70,7 +72,7 @@ public class StorageController {
 		JSONObject response = new JSONObject();
 		if (authServ.doAuthorizationCheck(req, userId)) {
 			if (file.isEmpty()) {
-				logger.error("Il file è vuoto.");
+				logger.error("il file è vuoto.");
 				response.put("result", "it seems an empty file");
 				return response.toString();
 			}
@@ -104,6 +106,8 @@ public class StorageController {
 
 	}
 
+	// --------------------------------------------------------------------------------------------------------------------------------------------------
+
 	@GetMapping("/spaces/all/{userId}")
 	public ResponseEntity<?> getAllSpacesByUserId(@PathVariable(name = "userId", required = true) Long userId,
 			HttpServletRequest req) {
@@ -127,6 +131,20 @@ public class StorageController {
 		JSONObject response = new JSONObject();
 		if (authServ.doAuthorizationCheck(req, userId) && storageServ.isHimTheSpaceOwner(spaceId, userId)) {
 			response = storageServ.getFileAndFolderWithParentNullBySpaceId(spaceId);
+			if (response != null) {
+				return ResponseEntity.ok(response.toString());
+			}
+			return ResponseEntity.badRequest().body(response.put("result", "bad result").toString());
+		}
+		return ResponseEntity.badRequest().body(response.put("result", "permission denied").toString());
+	}
+
+	@GetMapping("/folder")
+	public ResponseEntity<?> getFoldersContentById(@RequestParam(name = "userId", required = true) Long userId,
+			@RequestParam(name = "folderId", required = true) Long folderId, HttpServletRequest req) {
+		JSONObject response = new JSONObject();
+		if (authServ.doAuthorizationCheck(req, userId) && storageServ.isHimTheFolderOwner(folderId, userId)) {
+			response = storageServ.getFolderContentById(folderId);
 			if (response != null) {
 				return ResponseEntity.ok(response.toString());
 			}

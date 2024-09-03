@@ -123,6 +123,56 @@ public class StorageService implements StorageServiceInterface {
 		return null;
 	}
 
+	// -------------------------------------------------------------------------------------------------
+
+	public List<VaultFolder> getFoldersByFolderId(Long folderId) {
+		if (folderRepo.existsById(folderId)) {
+			List<VaultFolder> folders = folderRepo.findByParentFolderId(folderId);
+			for (VaultFolder folder : folders) {
+				folder.setSpace(null);
+				folder.setVaultUser(null);
+				folder.setSection(null);
+			}
+
+			return folders;
+		}
+		return null;
+	}
+
+	public List<VaultFile> getFileByParentFolderId(Long folderId) {
+		if (fileRepo.existsById(folderId)) {
+			List<VaultFile> files = fileRepo.findByParentFolderId(folderId);
+			for (VaultFile file : files) {
+				file.setSpace(null);
+				file.setVaultUser(null);
+				file.setSection(null);
+			}
+			return files;
+		}
+		return null;
+	}
+
+	public JSONObject getFolderContentById(Long folderId) {
+		List<VaultFile> files = getFileByParentFolderId(folderId);
+		List<VaultFolder> folders = getFoldersByFolderId(folderId);
+		JSONObject response = new JSONObject();
+		JSONArray fileArray = new JSONArray();
+		if (files != null) {
+			for (VaultFile file : files) {
+				fileArray.put(new JSONObject(file));
+			}
+			response.put("files", fileArray);
+		}
+		JSONArray folderArray = new JSONArray();
+		if (folders != null) {
+			for (VaultFolder folder : folders) {
+				folderArray.put(new JSONObject(folder));
+			}
+			response.put("folders", folderArray);
+		}
+		return response;
+	}
+
 	public List<VaultFolder> getFolderWithNullParentBySpaceId(Long spaceId) {
 		if (spaceRepo.existsById(spaceId)) {
 			List<VaultFolder> folders = folderRepo.findBySpaceIdAndParentFolderIsNull(spaceId);
@@ -171,6 +221,8 @@ public class StorageService implements StorageServiceInterface {
 		return response;
 	}
 
+	// -------------------------------------------------------------------------------------------------
+
 	public VaultFolder saveNewFolder(Long userId, Long spaceId, Long parentId, String name) {
 		VaultFolder folder = new VaultFolder();
 		Boolean isDone = false;
@@ -208,9 +260,10 @@ public class StorageService implements StorageServiceInterface {
 					completePath += parentPath;
 					completePath += "/" + folder.getName();
 				}
+			} else {
+				// error in folder path recreation
+				return null;
 			}
-			// error in folder path recreation
-			return null;
 		} else {
 			folder.setParentFolder(null);
 			completePath += "/" + folder.getName();
@@ -229,6 +282,8 @@ public class StorageService implements StorageServiceInterface {
 		}
 		return null;
 	}
+
+	// -------------------------------------------------------------------------------------------------
 
 	public JSONObject holdNewFolderRequest(Long userId, Long spaceId, Long parentId, String name) {
 		JSONObject response = new JSONObject();
@@ -258,6 +313,7 @@ public class StorageService implements StorageServiceInterface {
 		}
 	}
 
+	// -------------------------------------------------------------------------------------------------
 	public Boolean isHimTheFolderOwner(Long folderId, Long userId) {
 		return folderRepo.existsByIdAndUserId(folderId, userId);
 	}
@@ -360,6 +416,7 @@ public class StorageService implements StorageServiceInterface {
 			if (parentPath != null) {
 				vaultFile.setParentFolder(getFolderById(parentId));
 				completePath += parentPath;
+				completePath += vaultFile.getName();
 			} else {
 				return null;
 			}
@@ -375,6 +432,8 @@ public class StorageService implements StorageServiceInterface {
 		}
 		return null;
 	}
+
+	// -------------------------------------------------------------------------------------------------
 
 	public Resource holdDownloadRequest(Long userId, Long spaceId, Long folderId, Long fileId) {
 		Resource resource;

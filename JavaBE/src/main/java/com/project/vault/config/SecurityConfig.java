@@ -40,8 +40,6 @@ public class SecurityConfig {
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-//		http.cors(cors -> cors.disable());
-//				.cors(cors -> cors.configurationSource(corsConfigurationSource()))
 		return http.cors(cors -> cors.configurationSource(request -> {
 			CorsConfiguration config = new CorsConfiguration();
 			config.setAllowedOrigins(List.of("http://localhost:8686"));

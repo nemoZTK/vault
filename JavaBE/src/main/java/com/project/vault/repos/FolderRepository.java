@@ -20,4 +20,6 @@ public interface FolderRepository extends JpaRepository<VaultFolder, Long> {
 	boolean existsByIdAndUserId(@Param("folderId") Long folderId, @Param("userId") Long userId);
 
 	List<VaultFolder> findBySpaceIdAndParentFolderIsNull(Long spaceId);
+
+	List<VaultFolder> findByParentFolderId(Long parentId);
 }
