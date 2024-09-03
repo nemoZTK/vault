@@ -6,7 +6,7 @@
           <h1>S T R A N G E</h1>
         </slot>
         <div class="base-main-buttons-block">
-            <button class="grey-button" @click="handleButtonClick">add</button>
+            <button class="grey-button" @click="handleButtonClick">Add</button>
           <Dropdown :items="dropdownItems" @item-selected="onDropdownItemSelected" />
         </div>
       </div>
