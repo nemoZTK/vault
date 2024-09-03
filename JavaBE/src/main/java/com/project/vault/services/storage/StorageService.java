@@ -140,7 +140,7 @@ public class StorageService implements StorageServiceInterface {
 	}
 
 	public List<VaultFile> getFileByParentFolderId(Long folderId) {
-		if (fileRepo.existsById(folderId)) {
+		if (folderRepo.existsById(folderId)) {
 			List<VaultFile> files = fileRepo.findByParentFolderId(folderId);
 			for (VaultFile file : files) {
 				file.setSpace(null);
@@ -416,7 +416,7 @@ public class StorageService implements StorageServiceInterface {
 			if (parentPath != null) {
 				vaultFile.setParentFolder(getFolderById(parentId));
 				completePath += parentPath;
-				completePath += vaultFile.getName();
+				completePath += "/" + vaultFile.getName();
 			} else {
 				return null;
 			}
@@ -467,7 +467,8 @@ public class StorageService implements StorageServiceInterface {
 					path += "/" + fileInfo.getName();
 					resource = fileManagerServ.getFile(path);
 				} else {
-					path += "/" + getFullPathById(fileInfo.getParentFolder().getId());
+					path += getFullPathById(fileInfo.getParentFolder().getId());
+					path += "/" + fileInfo.getName();
 					resource = fileManagerServ.getFile(path);
 				}
 				return resource;

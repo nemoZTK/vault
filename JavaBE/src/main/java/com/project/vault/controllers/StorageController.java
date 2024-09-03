@@ -106,6 +106,49 @@ public class StorageController {
 
 	}
 
+	@GetMapping("/image")
+	public ResponseEntity<?> getImage(@RequestParam(name = "userId", required = true) Long userId,
+			@RequestParam(name = "spaceId", required = true) Long spaceId,
+			@RequestParam(name = "folderId", required = false) Long folderId,
+			@RequestParam(name = "fileId", required = false) Long fileId,
+			@RequestParam(name = "download", required = false, defaultValue = "false") boolean download,
+			HttpServletRequest req) {
+
+		if ((folderId == null && fileId == null) || (folderId != null && fileId != null)) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("You must provide a fileId OR a folderId");
+		}
+
+		if (authServ.doAuthorizationCheck(req, userId)) {
+			Resource resource = storageServ.holdDownloadRequest(userId, spaceId, folderId, fileId);
+			if (resource != null && resource.exists()) {
+				MediaType mediaType = determineMediaType(resource.getFilename());
+				ResponseEntity.BodyBuilder responseBuilder = ResponseEntity.ok().contentType(mediaType);
+
+				if (download) {
+					responseBuilder.header(HttpHeaders.CONTENT_DISPOSITION,
+							"attachment; filename=\"" + resource.getFilename() + "\"");
+				} else {
+					responseBuilder.header(HttpHeaders.CONTENT_DISPOSITION,
+							"inline; filename=\"" + resource.getFilename() + "\"");
+				}
+
+				return responseBuilder.body(resource);
+			}
+		}
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Resource not found");
+	}
+
+	private MediaType determineMediaType(String filename) {
+		if (filename.endsWith(".jpg") || filename.endsWith(".jpeg")) {
+			return MediaType.IMAGE_JPEG;
+		} else if (filename.endsWith(".png")) {
+			return MediaType.IMAGE_PNG;
+		} else if (filename.endsWith(".gif")) {
+			return MediaType.IMAGE_GIF;
+		}
+		return MediaType.APPLICATION_OCTET_STREAM; // Default
+	}
+
 	// --------------------------------------------------------------------------------------------------------------------------------------------------
 
 	@GetMapping("/spaces/all/{userId}")
