@@ -61,9 +61,12 @@ public class FileManagerService implements FileManagerInterface {
 
 	@Override
 	public Resource getFile(String knownPath) {
-		knownPath = basePath + knownPath;
+
+		String completePath = basePath + knownPath;
+		String m = "sss";
 		try {
-			URI fileUri = Paths.get(knownPath).normalize().toUri();
+
+			URI fileUri = Paths.get(completePath).normalize().toUri();
 			Resource resource = new UrlResource(fileUri);
 			if (resource.exists() && resource.isReadable()) {
 				return resource;
