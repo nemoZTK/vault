@@ -1,54 +1,63 @@
 <template>
     <div class="base-main-container-block" @mousemove="handleMouseMove" @mouseleave="handleMouseLeave">
-        <div class="hover-effect" ref="hoverEffect"></div>
-        <div class="base-main-header-block">
-            <slot name="header">
-                <h1>S T R A N G E</h1>
-            </slot>
-            <div class="base-main-buttons-block">
-                <Dropdown :items="dropdownItems" @item-selected="onDropdownItemSelected" />
-                <button class="grey-button" @click="$emit('add-new-space')">aggiungi</button>
-            </div>
+      <div class="hover-effect" ref="hoverEffect"></div>
+      <div class="base-main-header-block">
+        <slot name="header">
+          <h1>S T R A N G E</h1>
+        </slot>
+        <div class="base-main-buttons-block">
+            <button class="grey-button" @click="handleButtonClick">add</button>
+          <Dropdown :items="dropdownItems" @item-selected="onDropdownItemSelected" />
         </div>
-        <div class="content-block custom-scrollbar">
-            <slot></slot>
-        </div>
+      </div>
+      <div class="content-block custom-scrollbar">
+        <slot></slot>
+      </div>
     </div>
-    
-</template>
-
-<script>
-import hoverEffect from '/src/utils/hoverEffect.js';
-import Dropdown from './Dropdown.vue';
-
-export default {
+  </template>
+  
+  <script>
+  import hoverEffect from '/src/utils/hoverEffect.js';
+  import Dropdown from './Dropdown.vue';
+  
+  export default {
     components: {
-        Dropdown
+      Dropdown
     },
     mixins: [hoverEffect],
+    props: {
+      actionType: {
+        type: String,
+        default: 'space' // Default value if not specified
+      }
+    },
     data() {
-        return {
-            dropdownItems: [
-                { label: 'Option 1', value: 'option1' },
-                { label: 'Option 2', value: 'option2' },
-                { label: 'Option 3', value: 'option3' },
-                { label: 'Option 4', value: 'option4' },
-                { label: 'Option 5', value: 'option5' },
-                { label: 'Option 6', value: 'optione6' }
-            ],
-            showingFilterForm: false
-        };
+      return {
+        dropdownItems: [
+          { label: 'Option 1', value: 'option1' },
+          { label: 'Option 2', value: 'option2' },
+          { label: 'Option 3', value: 'option3' },
+          { label: 'Option 4', value: 'option4' },
+          { label: 'Option 5', value: 'option5' },
+          { label: 'Option 6', value: 'optione6' }
+        ]
+      };
     },
     methods: {
-
-        onDropdownItemSelected(value) {
-            // Azione per l'elemento selezionato nel dropdown
-            console.log('Selected:', value);
+      handleButtonClick() {
+        if (this.actionType === 'space') {
+          this.$emit('add-new-space');
+        } else if (this.actionType === 'folder') {
+          this.$emit('add-new-folder');
         }
+      },
+      onDropdownItemSelected(value) {
+        console.log('Selected:', value);
+      }
     }
-};
-</script>
-
+  };
+  </script>
+  
 <style scoped>
 @import '@/styles/scrollbar.css';
 

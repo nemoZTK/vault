@@ -44,7 +44,7 @@ export default {
           const { id, username, token } = response.data;
           localStorage.setItem('authToken', token);
           console.log("done for ", username, id, token);
-          this.$store.commit('register', { username, id }); // Usa Vuex per aggiornare lo stato
+          this.$store.commit('register', { username, id , token }); // Usa Vuex per aggiornare lo stato
           this.hideForm();
         }
       } catch (error) {
@@ -56,7 +56,7 @@ export default {
       }
     },
     switchToLogin() {
-      this.$emit('switch-to-login');
+      this.$emit('switch-form','login');
     },
     hideForm() {
       this.$emit('close');

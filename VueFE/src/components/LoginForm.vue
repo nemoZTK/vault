@@ -39,7 +39,7 @@ export default {
           localStorage.setItem('authToken', token);
           localStorage.setItem('username', this.username);
           localStorage.setItem('id', id);
-
+          console.log("done for ", this.username, id, token);
           // Aggiorna lo stato di Vuex
           this.$store.commit('login', { username: this.username, id, token });
 
@@ -47,7 +47,7 @@ export default {
           this.hideForm();
         }
       } catch (error) {
-        console.error('Errore:', error);
+        console.error('Errore:', error.response ? error.response.data : error.message);
         alert('Errore durante il login. Per favore, riprova.');
       }
     },

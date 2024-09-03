@@ -6,7 +6,7 @@
       </template>
       <template #default>
         <ul>
-          <li v-for="space in spaces" :key="space.id" @click="selectSpace(space.id)">
+          <li v-for="space in spaces" :key="space.id" @click="goToFoldersPage(space.id, space.name)">
             {{ space.name }}
           </li>
         </ul>
@@ -17,7 +17,7 @@
 
 <script>
 import BaseMainBlock from '../components/BaseMainBlock.vue';
-import protectedApiClient from '../protectedApiClient'; // Assicurati che il percorso sia corretto
+import protectedApiClient from '../protectedApiClient'; 
 
 export default {
   components: {
@@ -25,7 +25,7 @@ export default {
   },
   data() {
     return {
-      spaces: [] // Array per memorizzare gli spazi recuperati
+      spaces: [] 
     };
   },
   async mounted() {
@@ -37,7 +37,7 @@ export default {
         const userId = localStorage.getItem('id');
         if (userId != null) {
           const response = await protectedApiClient.get(`/storage/spaces/all/${userId}`);
-          this.spaces = response.data.spaces; // Assumi che `spaces` sia il campo nella risposta
+          this.spaces = response.data.spaces;
         }
       } catch (error) {
         console.error('Errore nel recupero degli spazi:', error);
@@ -64,10 +64,10 @@ export default {
         console.error('Errore nella creazione dello spazio:', error);
       }
     },
-    selectSpace(spaceId) {
+    goToFoldersPage(spaceId, spaceName) {
       localStorage.setItem('selectedSpaceId', spaceId);
-      console.log(`Space ID ${spaceId} selezionato.`);
-      // Puoi anche navigare a una nuova pagina o effettuare altre azioni
+      localStorage.setItem('selectedSpaceName', spaceName);
+      this.$router.push('/folders'); // Naviga alla pagina delle cartelle
     }
   }
 };
@@ -81,12 +81,14 @@ export default {
 
 .spaces li {
   cursor: pointer;
+  color: var(--menu-hover-color);
   padding: 10px;
-  border-bottom: 1px solid #ccc;
+  border-bottom: 1px solid var(--menu-primary-color);
 }
 
 .spaces li:hover {
-  background-color: #f0f0f0;
+  background-color: var(--menu-hover-color);
+  color:var(--menu-font-color);
 }
 
 /* Stili specifici per la pagina spaces */

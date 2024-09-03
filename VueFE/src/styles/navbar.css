@@ -65,7 +65,26 @@
     border: 1px solid #ccc;
     flex: 1;
   }
+
+  .navbar-menu .welcome-container {
+    display: flex;
+    align-items: center; /* Allinea verticalmente il contenuto */
+    justify-content: space-between; /* Spazio tra gli elementi */
+  }
   
+  .navbar-menu .welcome-text {
+    display: flex;
+    flex-direction: column;
+    flex: 1; /* Permette a questo elemento di occupare spazio disponibile */
+    margin-right: 10px; /* Spazio tra il testo e il bottone */
+    color: var(--menu-title-color); /* Sostituisci con il colore desiderato */
+    font-family: Arial, sans-serif; /* Sostituisci con il font desiderato */
+    font-size: 16px; /* Sostituisci con la dimensione del font desiderata */
+  }
+  
+  .navbar-menu .logout-button {
+    align-self: flex-end; 
+  }
   .navbar-search button {
     padding: 0.5rem;
     background: var(--menu-btn-color);
@@ -124,6 +143,7 @@
       width: 100%;
       text-align: center;
     }
+
   
     .navbar-search {
       width: 100%;

@@ -10,9 +10,12 @@
     <div class="navbar-menu">
       <button class="grey-button" v-if="!isLoggedIn" @click="$emit('show-login')">Login</button>
       <button  class="grey-button" v-if="!isLoggedIn" @click="$emit('show-register')">Registrati</button>
-      <div v-if="isLoggedIn">
-        <span>Benvenuto {{ username }}</span>
-        <button @click="$emit('logout')">Logout</button>
+      <div v-if="isLoggedIn" class="welcome-container">
+        <div class="welcome-text">
+          <span>Welcome</span>
+          <span>{{ username }}</span>
+        </div>
+        <button class="grey-button logout-button" @click="$emit('logout')">Logout</button>
       </div>
     </div>
     <div class="hover-effect" ref="hoverEffect"></div>
