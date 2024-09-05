@@ -11,15 +11,17 @@
           <button class="grey-button" @click="goBack" :disabled="!folderStack.length">Back</button>
         </div>
         <div>
-          <input type="file" ref="fileInput" style="display: none" @change="handleFileChange" />
+          <input type="file" ref="fileInput" style="display: none" @change="handleFileChange" webkitdirectory />
           <button class="grey-button" @click="triggerFileInput">Upload</button>
         </div>
       </template>
       <template #default>
         <ul>
-          <li v-for="folder in folders" :key="'folder-' + folder.id" class="folder-item" @click="selectFolder(folder.id, folder.name)">
-            <button class="grey-button download-button" @click.stop="downloadItem(folder.id, 'folder')">Download</button>
-          <span>📁 {{ folder.name }}</span>
+          <li v-for="folder in folders" :key="'folder-' + folder.id" class="folder-item"
+            @click="selectFolder(folder.id, folder.name)">
+            <button class="grey-button download-button"
+              @click.stop="downloadItem(folder.id, 'folder')">Download</button>
+            <span>📁 {{ folder.name }}</span>
           </li>
           <li v-for="file in files" :key="'file-' + file.id" class="file-item" @click="selectFile(file.id)">
             <span>📄 {{ file.name }} ({{ formatFileSize(file.size) }})</span>
@@ -36,12 +38,13 @@
 import BaseMainBlock from '@/components/BaseMainBlock.vue';
 import { uploadFile } from '@/utils/uploadHandler';
 import { createNewFolder } from '@/utils/folderGenerator';
-import { downloadItem } from '@/utils/downloadHandler'; // Importa la funzione downloadItem
+import { downloadItem } from '@/utils/downloadHandler'; 
 import protectedApiClient from '../protectedApiClient';
-
+import InputForm from '../components/InsertNameForm.vue';
 export default {
   components: {
-    BaseMainBlock
+    BaseMainBlock,
+    InputForm
   },
   data() {
     return {
@@ -73,7 +76,7 @@ export default {
           : { userId: this.userId, spaceId: this.spaceId };
 
         const response = await protectedApiClient.get(endpoint, { params });
-        
+
         this.folders = response.data.folders || [];
         this.files = response.data.files || [];
 
@@ -93,8 +96,8 @@ export default {
         console.error('Errore nel recupero di cartelle e file:', error);
       }
     },
-    createNewFolder() {
-      createNewFolder(this.userId, this.spaceId, this.folderStack, this.fetchFoldersAndFiles);
+    createNewFolder(folderName) {
+      createNewFolder(this.userId, this.spaceId, this.folderStack, this.fetchFoldersAndFiles,folderName);
     },
     selectFolder(folderId, folderName) {
       this.currentFolderName = folderName;
@@ -111,7 +114,7 @@ export default {
     },
     async goBack() {
       if (this.folderStack.length > 0) {
-        const currentFolder = this.folderStack.pop(); 
+        const currentFolder = this.folderStack.pop();
         const previousFolder = this.folderStack.length ? this.folderStack[this.folderStack.length - 1] : null;
 
         if (previousFolder) {
@@ -138,37 +141,38 @@ export default {
       const file = event.target.files[0];
       if (file) {
         this.selectedFile = file;
-        this.uploadFile(); 
+        this.uploadFile();
       }
     },
     async uploadFile() {
       await uploadFile(this.selectedFile, this.userId, this.spaceId, this.folderStack, this.fetchFoldersAndFiles);
     },
     downloadItem(id, type) {
-      downloadItem(id, type); // Usa la funzione di download dal modulo separato
+      downloadItem(id, type);
     }
   }
 };
 </script>
-  <style scoped>
-  .folders ul {
-    list-style-type: none;
-    padding: 0;
-  }
-  
-  .folders li {
-    cursor: pointer;
+<style scoped>
+.folders ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.folders li {
+  cursor: pointer;
   color: var(--menu-hover-color);
   padding: 10px;
   border-bottom: 1px solid var(--menu-primary-color);
-  }
-  
-  .folders li:hover {
-    background-color: var(--menu-hover-color);
-    color:var(--menu-font-color);
-   }
+}
 
-   .folder-item, .file-item {
+.folders li:hover {
+  background-color: var(--menu-hover-color);
+  color: var(--menu-font-color);
+}
+
+.folder-item,
+.file-item {
   position: relative;
   padding: 5px;
 }
@@ -181,9 +185,8 @@ export default {
   transform: translateY(-50%);
 }
 
-.folder-item:hover .download-button, 
+.folder-item:hover .download-button,
 .file-item:hover .download-button {
   display: inline-block;
 }
-
-  </style>
+</style>

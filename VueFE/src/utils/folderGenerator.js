@@ -1,8 +1,10 @@
-import protectedApiClient from '../protectedApiClient'; 
+import protectedApiClient from '../protectedApiClient';
 
-export async function createNewFolder(userId, spaceId, folderStack, fetchFoldersAndFiles) {
-  const folderName = prompt("Inserisci il nome della nuova cartella:");
+export async function createNewFolder(userId, spaceId, folderStack, fetchFoldersAndFiles, folderName) {
+  // Controlla se il nome della cartella è stato fornito
   if (!folderName || !spaceId || !userId) {
+    console.log("qalcosa non c'era " + folderName + " space id" + spaceId + " usr " + userId);
+
     return;
   }
 
@@ -17,7 +19,8 @@ export async function createNewFolder(userId, spaceId, folderStack, fetchFolders
     });
 
     if (response.status === 200) {
-      alert(`Cartella "${response.data.name}" creata con successo!`);
+      console.log("created new folder " + folderName);
+
       await fetchFoldersAndFiles(parentId);  // Ricarica la lista delle cartelle e file
     }
   } catch (error) {

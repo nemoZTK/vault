@@ -1,5 +1,3 @@
-// utils/downloadHandler.js
-
 import protectedApiClient from '../protectedApiClient';
 
 /**
@@ -40,19 +38,27 @@ export async function downloadItem(id, type) {
     }
 
     try {
-        const response = await protectedApiClient.get(endpoint, { params, responseType: 'blob' });
+        const response = await protectedApiClient.get(endpoint, { params, responseType: 'blob', withCredentials: true });
 
         if (response.status === 200) {
-            const blob = response.data;
-            const contentDisposition = response.headers['content-disposition'] ||
-            response.headers['Content-Disposition'] ||
-            response.headers['Content-Disposition'.toLowerCase()];
+            console.log(response.headers);
+            const contentDisposition = response.headers['content-disposition'];
 
-            console.log("la contentDescription è ---> "+contentDisposition);
-            const filename = contentDisposition ? contentDisposition.split('filename=')[1] : `${type}_${id}.zip`;
-console.log("file name ottenuto---> "+ filename);
+            console.log("La contentDisposition è ---> " + contentDisposition);
+            let filename = 'downloaded_file';
 
-            const url = URL.createObjectURL(blob);
+            // Estrai il nome del file dalla content-disposition
+            if (contentDisposition) {
+                const filenameMatch = contentDisposition.match(/filename="(.+)"/);
+                if (filenameMatch.length === 2) {
+                    filename = filenameMatch[1];
+                }
+            }
+
+            console.log("File name ottenuto ---> " + filename);
+
+            // Crea un URL per il blob e scarica il file
+            const url = URL.createObjectURL(response.data);
             const link = document.createElement('a');
             link.href = url;
             link.download = filename;

@@ -43,8 +43,9 @@ export default {
           // Aggiorna lo stato di Vuex
           this.$store.commit('login', { username: this.username, id, token });
 
-          // Chiudi il modulo di login
+          // Chiudi il modulo di login e ricarica
           this.hideForm();
+          window.location.reload();
         }
       } catch (error) {
         console.error('Errore:', error.response ? error.response.data : error.message);
