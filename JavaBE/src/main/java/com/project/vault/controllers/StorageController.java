@@ -123,10 +123,12 @@ public class StorageController {
 			if (resource != null && resource.exists()) {
 				MediaType mediaType = determineMediaType(resource.getFilename());
 				ResponseEntity.BodyBuilder responseBuilder = ResponseEntity.ok().contentType(mediaType);
+				responseBuilder.header(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, "Content-Disposition");
 
 				if (download) {
 					responseBuilder.header(HttpHeaders.CONTENT_DISPOSITION,
 							"attachment; filename=\"" + resource.getFilename() + "\"");
+
 				} else {
 					responseBuilder.header(HttpHeaders.CONTENT_DISPOSITION,
 							"inline; filename=\"" + resource.getFilename() + "\"");
