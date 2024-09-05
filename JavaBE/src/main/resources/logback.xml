@@ -1,25 +1,48 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
-    <!-- Appender per la console -->
-    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <!-- Definizione del converter custom -->
+    <conversionRule conversionWord="highlight"
+        converterClass="com.project.vault.util.logger.CustomLoggerUtil" />
+
+    <!-- Definizione del converter custom per il messaggio -->
+    <conversionRule conversionWord="highlightMsg"
+        converterClass="com.project.vault.util.logger.CustomMessageConverter" />
+
+    <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%d{dd/MM/yy HH:mm:ss} %-5level %logger{36} - %msg%n</pattern>
+            <pattern>%d{HH:mm:ss.SSS} %highlight(%level==[) %logger{5} %highlight(]===> %msg) %n</pattern>
         </encoder>
     </appender>
 
-    <!-- Appender per il file -->
-    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
-        <file>logs/app.log</file>
+    <appender name="CustomConsole" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%d{dd/MM/yy HH:mm:ss} %-5level %logger{36} - %msg%n</pattern>
+            <pattern>%d{HH:mm:ss.SSS} %highlight(%level--[) %logger{0} %highlight(]-->) %msg %n</pattern>
         </encoder>
     </appender>
 
-    <!-- Root logger -->
+    <appender name="ResponseConsole" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} %highlight(%level)--[ %logger{0} ]--> %highlightMsg(%msg) %n</pattern>
+        </encoder>
+    </appender>
+
     <root level="INFO">
-        <appender-ref ref="STDOUT" />
-        <appender-ref ref="FILE" />
+        <appender-ref ref="Console" />
     </root>
+
+    <logger name="com.project.vault.services" level="TRACE"
+        additivity="false">
+        <appender-ref ref="CustomConsole" />
+    </logger>
+
+    <logger name="com.project.vault.filters"
+        level="DEBUG" additivity="false">
+        <appender-ref ref="ResponseConsole" />
+    </logger>
+
+    <logger name="com.project.vault.tests" level="DEBUG"
+        additivity="false">
+        <appender-ref ref="CustomConsole" />
+    </logger>
 
 </configuration>

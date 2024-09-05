@@ -29,7 +29,7 @@ public class UsersController {
 	private VaultUserAuthenticationService authServ;
 
 	@PostMapping("/create")
-	ResponseEntity<String> create(@RequestBody VaultUser user) {
+	ResponseEntity<?> create(@RequestBody VaultUser user) {
 		logger.info("new user creation request--->" + user.getUsername());
 		VaultUser savedUser = authServ.create(user);
 		JSONObject response = new JSONObject();
@@ -49,23 +49,23 @@ public class UsersController {
 	}
 
 	@PostMapping("/login")
-	public String login(@RequestBody newLoginRequest req) {
+	public ResponseEntity<?> login(@RequestBody newLoginRequest req) {
 		Long requestUserId;
 
 		requestUserId = authServ.getUserIdByUsername(req.username);
 		if (requestUserId != null) {
-			return requestUserId + "|" + authServ.verify(req.username, req.password);
+			return ResponseEntity.ok(requestUserId + "|" + authServ.verify(req.username, req.password));
 		}
-		return "wrong username or password";
+		return ResponseEntity.badRequest().body("wrong username or password");
 	}
 
 	@PostMapping("/logout")
-	public String logout(HttpServletRequest request) {
+	public ResponseEntity<?> logout(HttpServletRequest request) {
 		String token = request.getHeader("Authorization");
 		if (token != null) {
-			return "Logged out successfully";
+			return ResponseEntity.ok("Logged out successfully");
 		} else {
-			return "No token provided";
+			return ResponseEntity.badRequest().body("No token provided");
 		}
 	}
 

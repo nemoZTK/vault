@@ -46,6 +46,7 @@ export default {
           console.log("done for ", username, id, token);
           this.$store.commit('register', { username, id , token }); // Usa Vuex per aggiornare lo stato
           this.hideForm();
+          window.location.reload();
         }
       } catch (error) {
         if (error.response && error.response.status === 400) {

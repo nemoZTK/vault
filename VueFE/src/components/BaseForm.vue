@@ -45,7 +45,7 @@ export default {
 }
 /* Stili del contenitore del modulo */
 .form-container {/*questo dovrebbe stare sopra*/
-  
+
   position: fixed;
   color: var(--menu-title-color);
   background-color: var(--menu-primary-color);

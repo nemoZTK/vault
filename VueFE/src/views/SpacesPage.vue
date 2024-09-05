@@ -15,17 +15,20 @@
   </div>
 </template>
 
+
 <script>
 import BaseMainBlock from '../components/BaseMainBlock.vue';
+import InputForm from '../components/InsertNameForm.vue';
 import protectedApiClient from '../protectedApiClient'; 
 
 export default {
   components: {
-    BaseMainBlock
+    BaseMainBlock,
+    InputForm
   },
   data() {
     return {
-      spaces: [] 
+      spaces: []
     };
   },
   async mounted() {
@@ -43,21 +46,23 @@ export default {
         console.error('Errore nel recupero degli spazi:', error);
       }
     },
-    async createNewSpace() {
+
+    async createNewSpace(spaceName) {
       const userId = localStorage.getItem('id');
-      const spaceName = prompt("Inserisci il nome del nuovo spazio:");
-      if (!spaceName || !userId) {
+      if (!userId || !spaceName) {
         return;
       }
 
       try {
         const response = await protectedApiClient.post('/storage/newspace', {
-          userId: parseInt(userId), 
+          userId: parseInt(userId),
           spaceName: spaceName
         });
 
         if (response.status === 200) {
-          alert(`Spazio "${response.data.name}" creato con successo!`);
+          console.log("space creato");
+          
+
           await this.fetchSpaces(); // Ricarica la lista degli spazi
         }
       } catch (error) {
@@ -91,10 +96,6 @@ export default {
   color:var(--menu-font-color);
 }
 
-/* Stili specifici per la pagina spaces */
-.base-main-header-block h1 {
-  margin-left: 8rem;
-}
 @media (max-width: 768px) {
   .base-main-header-block h1 {
     letter-spacing: 0.6rem;

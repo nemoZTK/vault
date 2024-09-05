@@ -7,7 +7,7 @@ export default {
       const { left, top } = element.getBoundingClientRect();
       const x = event.clientX - left;
       const y = event.clientY - top;
-      
+
       hoverEffect.style.left = `${x - 50}px`; // Centra l'effetto
       hoverEffect.style.top = `${y - 50}px`;
       hoverEffect.style.transform = `scale(1)`;

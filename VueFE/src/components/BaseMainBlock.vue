@@ -1,69 +1,84 @@
 <template>
-    <div class="base-main-container-block" @mousemove="handleMouseMove" @mouseleave="handleMouseLeave">
-      <div class="hover-effect" ref="hoverEffect"></div>
-      <div class="base-main-header-block">
-        <slot name="header">
-          <h1>S T R A N G E</h1>
-        </slot>
-        <div class="base-main-buttons-block">
-            <button class="grey-button" @click="handleButtonClick">Add</button>
-          <Dropdown :items="dropdownItems" @item-selected="onDropdownItemSelected" />
-        </div>
-      </div>
-      <div class="content-block custom-scrollbar">
-        <slot></slot>
+  <div class="base-main-container-block" @mousemove="handleMouseMove" @mouseleave="handleMouseLeave">
+    <div class="hover-effect" ref="hoverEffect"></div>
+    <div class="base-main-header-block">
+      <slot name="header">
+        <h1>S T R A N G E</h1>
+      </slot>
+      <div class="base-main-buttons-block">
+        <button class="grey-button" @click="handleButtonClick">Add</button>
+        <Dropdown :items="dropdownItems" @item-selected="onDropdownItemSelected" />
       </div>
     </div>
-  </template>
-  
-  <script>
-  import hoverEffect from '/src/utils/hoverEffect.js';
-  import Dropdown from './Dropdown.vue';
-  
-  export default {
-    components: {
-      Dropdown
-    },
-    mixins: [hoverEffect],
-    props: {
-      actionType: {
-        type: String,
-        default: 'space' // Default value if not specified
-      }
-    },
-    data() {
-      return {
-        dropdownItems: [
-          { label: 'Option 1', value: 'option1' },
-          { label: 'Option 2', value: 'option2' },
-          { label: 'Option 3', value: 'option3' },
-          { label: 'Option 4', value: 'option4' },
-          { label: 'Option 5', value: 'option5' },
-          { label: 'Option 6', value: 'optione6' }
-        ]
-      };
-    },
-    methods: {
-      handleButtonClick() {
-        if (this.actionType === 'space') {
-          this.$emit('add-new-space');
-        } else if (this.actionType === 'folder') {
-          this.$emit('add-new-folder');
-        }
-      },
-      onDropdownItemSelected(value) {
-        console.log('Selected:', value);
-      }
+    <div class="content-block custom-scrollbar">
+      <slot></slot>
+    </div>
+    <InsertNameForm v-if="showInsertNameForm" @submit="handleInsertNameSubmit" @close="closeInsertNameForm" />
+  </div>
+</template>
+<script>
+import hoverEffect from '/src/utils/hoverEffect.js';
+import Dropdown from './Dropdown.vue';
+import InsertNameForm from './InsertNameForm.vue';
+
+export default {
+  components: {
+    Dropdown,
+    InsertNameForm
+  },
+  mixins: [hoverEffect],
+  props: {
+    actionType: {
+      type: String,
+      default: 'space' // Default value if not specified
     }
-  };
-  </script>
-  
+  },
+  data() {
+    return {
+      dropdownItems: [
+        { label: 'Option 1', value: 'option1' },
+        { label: 'Option 2', value: 'option2' },
+        { label: 'Option 3', value: 'option3' },
+        { label: 'Option 4', value: 'option4' },
+        { label: 'Option 5', value: 'option5' },
+        { label: 'Option 6', value: 'option6' } // Example items for dropdown
+      ],
+      showInsertNameForm: false // State to show/hide the form
+    };
+  },
+  methods: {
+    handleButtonClick() {
+      this.showInsertNameForm = true; // Show the form
+    },
+    handleInsertNameSubmit(name) {
+      if (!name) return;
+
+      if (this.actionType === 'space') {
+        console.log("capito da space");
+        this.$emit('add-new-space', name); // Emit event to create a new space
+      } else if (this.actionType === 'folder') {
+        console.log("capito da FOLDER" + name);
+        this.$emit('add-new-folder', name); // Emit event to create a new folder
+      }
+
+      this.showInsertNameForm = false; // Hide the form after submission
+    },
+    closeInsertNameForm() {
+      this.showInsertNameForm = false; // Hide the form
+    },
+    onDropdownItemSelected(value) {
+      console.log('Selected:', value);
+    }
+  }
+};
+</script>
+
 <style scoped>
 @import '@/styles/scrollbar.css';
 
 .base-main-container-block {
     background-color: var(--menu-primary-color);
-    position: absolute;
+    position: fixed;
     top: 10rem;
     left: 0;
     right: 0;
@@ -78,15 +93,17 @@
     box-shadow: 0 4px 3px rgba(0, 0, 0, 0.2);
     margin: 0 0.7vw;
     margin-top: 3rem;
+    height: 70%;
     max-width: calc(100% - 1.4vw);
     z-index: 1;
     box-sizing: border-box;
     transition: padding 0.3s ease, margin 0.3s ease;
 }
 .content-block{
-    max-height: 50vh; /* Imposta l'altezza massima del blocco */
+    max-height: 60vh; /* Imposta l'altezza massima del blocco */
   overflow-y: auto; /* Abilita lo scroll verticale quando necessario */
-  width: 100%; /* Puoi anche impostare una larghezza fissa se necessario */
+height: 80%;
+  width: 100%; 
 
 }
 

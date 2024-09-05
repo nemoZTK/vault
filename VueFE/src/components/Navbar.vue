@@ -15,7 +15,7 @@
           <span>Welcome</span>
           <span>{{ username }}</span>
         </div>
-        <button class="grey-button logout-button" @click="$emit('logout')">Logout</button>
+        <button class="grey-button logout-button" @click="logout">Logout</button>
       </div>
     </div>
     <div class="hover-effect" ref="hoverEffect"></div>
@@ -48,8 +48,20 @@ export default {
       console.log('Ricerca eseguita per:', this.searchQuery);
     },
     logout() {
-      this.$store.commit('logout');
+      if (this.$router) {
+      console.log('Router is available');
+    } else {
+      console.error('Router is not available');
     }
+      this.$store.commit('logout');
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('username');
+      localStorage.removeItem('id');
+      if (this.$route.path !== '/') {
+      this.$router.push('/');
+      }
+    }
+
   }
 };
 </script>
