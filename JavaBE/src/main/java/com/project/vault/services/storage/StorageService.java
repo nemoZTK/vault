@@ -416,11 +416,14 @@ public class StorageService implements StorageServiceInterface {
 			if (parentPath != null) {
 				vaultFile.setParentFolder(getFolderById(parentId));
 				completePath += parentPath;
+
 				completePath += "/" + vaultFile.getName();
+
 			} else {
 				return null;
 			}
 		}
+		logger.info("before the method path is---->" + completePath);
 		isDone = fileManagerServ.saveFile(completePath, file);
 		if (isDone) {
 			try {

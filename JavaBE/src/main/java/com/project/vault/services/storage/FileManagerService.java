@@ -48,8 +48,12 @@ public class FileManagerService implements FileManagerInterface {
 
 	@Override
 	public Boolean saveFile(String knownPath, MultipartFile file) {
+		logger.info("file will be saved in " + knownPath);
 		knownPath = basePath + knownPath;
 		Path absolutePath = Paths.get(knownPath).normalize();
+
+		logger.info("final path is " + absolutePath.toString());
+
 		try {
 			file.transferTo(absolutePath);
 		} catch (Exception localSaveError) {
