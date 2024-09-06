@@ -4,7 +4,7 @@
     <form @submit.prevent="submit">
       <slot name="form-fields"></slot> <!-- Slot per i campi del modulo -->
       <button type="submit">{{ submitButtonText }}</button>
-      <button type="button" @click="closeForm">Annulla</button>
+      <button type="button" @click="closeForm">Cancel</button>
       <div class="footer-slot">
       <slot name="footer"></slot> <!-- Slot per i pulsanti di cambio modulo -->
       </div>

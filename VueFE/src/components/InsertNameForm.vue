@@ -1,7 +1,7 @@
 <template>
-    <BaseForm title="Inserisci Nome" submitButtonText="Conferma" @submit="submit" @close="closeForm">
+    <BaseForm title="Insert Name" submitButtonText="Confirm" @submit="submit" @close="closeForm">
       <template v-slot:form-fields>
-        <input type="text" v-model="name" placeholder="Nome" required />
+        <input type="text" v-model="name" placeholder="Name..." required />
       </template>
     </BaseForm>
   </template>

@@ -4,12 +4,12 @@
       <a href="./" :class="{ 'compressed': !isHome }">Vault</a>
     </div>
     <div class="navbar-search" v-if="!isHome">
-  <input type="text" placeholder="Cerca..." v-model="searchQuery" />
-  <button @click="performSearch">🔍</button>
+  <input type="text" placeholder="Search..." v-model="searchQuery" />
+  <button class="grey-button" @click="performSearch">🔍</button>
 </div>
     <div class="navbar-menu">
       <button class="grey-button" v-if="!isLoggedIn" @click="$emit('show-login')">Login</button>
-      <button  class="grey-button" v-if="!isLoggedIn" @click="$emit('show-register')">Registrati</button>
+      <button  class="grey-button" v-if="!isLoggedIn" @click="$emit('show-register')">Sign-up</button>
       <div v-if="isLoggedIn" class="welcome-container">
         <div class="welcome-text">
           <span>Welcome</span>

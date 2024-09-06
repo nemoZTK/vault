@@ -3,11 +3,14 @@
     <template v-slot:form-fields>
       <input type="text" v-model="username" placeholder="Username" required />
       <input type="email" v-model="email" placeholder="Email" required />
+      <p v-if="emailError" class="error-message">{{ emailError }}</p>
       <input type="password" v-model="password" placeholder="Password" required />
-      <input type="password" v-model="confirmPassword" placeholder="Conferma Password" required />
+      <input type="password" v-model="confirmPassword" placeholder="Confirm Password" required />
+      <p v-if="passwordError" class="error-message">{{ passwordError }}</p>
     </template>
-    <template v-slot:footer>
-      <p>Hai già un account? <button type="button" @click="switchToLogin">Login</button></p>
+    <template v-slot:form-footer>
+      <p>Do you already have an account?<button type="button" @click="switchToLogin">Login</button></p>
+      <p v-if="genericError" class="error-message">{{ genericError }}</p>
     </template>
   </BaseForm>
 </template>
@@ -16,24 +19,45 @@
 import BaseForm from './BaseForm.vue';
 import axios from '../publicApiClient'; // Assicurati che questo percorso sia corretto
 
-export default {  
+export default {
   components: { BaseForm },
   data() {
     return {
       username: '',
       email: '',
       password: '',
-      confirmPassword: ''
+      confirmPassword: '',
+      emailError: '',  // Variabile per errori email
+      passwordError: '', // Variabile per errori password
+      genericError: '',  // Variabile per errori generici
     };
   },
   methods: {
+    validateEmail(email) {
+      // Usa una semplice regex per validare l'email
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return emailPattern.test(email);
+    },
     async register() {
+      // Resetta i messaggi di errore
+      this.emailError = '';
+      this.passwordError = '';
+      this.genericError = '';
+
+      // Verifica se le password coincidono
       if (this.password !== this.confirmPassword) {
-        alert('Le password non coincidono.');
+        this.passwordError = 'Le password non coincidono.';
+        return;
+      }
+
+      // Verifica se l'email è valida
+      if (!this.validateEmail(this.email)) {
+        this.emailError = 'Indirizzo email non valido.';
         return;
       }
 
       try {
+        // Invia i dati al server
         const response = await axios.post('/users/create', {
           username: this.username,
           email: this.email,
@@ -50,14 +74,15 @@ export default {
         }
       } catch (error) {
         if (error.response && error.response.status === 400) {
-          alert('Errore nella registrazione. Per favore, riprova.');
+          // Messaggio di errore generico per bad request (400)
+          this.genericError = 'Errore nella registrazione. Per favore, riprova.';
         } else {
           console.error('Errore:', error);
         }
       }
     },
     switchToLogin() {
-      this.$emit('switch-form','login');
+      this.$emit('switch-form', 'login');
     },
     hideForm() {
       this.$emit('close');
@@ -67,7 +92,14 @@ export default {
 </script>
 
 <style scoped>
+.error-message {
+  color: red;
+  margin-top: 5px;
+  text-align: center;
+  font-weight: bold;
+}
+
 .form-container .footer-slot button {
-  margin-left: 3.85rem;
+  margin-left: 2rem;
 }
 </style>
