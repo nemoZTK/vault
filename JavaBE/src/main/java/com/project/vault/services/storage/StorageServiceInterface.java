@@ -5,7 +5,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.project.vault.entities.VaultFile;
 import com.project.vault.entities.VaultFolder;
-import com.project.vault.entities.VaultSpace;
 
 public interface StorageServiceInterface {
 
@@ -14,18 +13,12 @@ public interface StorageServiceInterface {
 
 	VaultFolder getFolderById(Long id);
 
-	JSONObject holdNewFolderRequest(Long userId, Long spaceId, Long parentId, String name);
-
 	Boolean isHimTheFolderOwner(Long folderId, Long userId);
 
+	JSONObject holdNewFolderRequest(Long userId, Long spaceId, Long parentId, String name);
+
 	// ---------spaces
-	VaultSpace saveNewSpace(String name, Long userId);
-
 	JSONObject holdNewSpaceRequest(String name, Long userId);
-
-	Boolean isHimTheSpaceOwner(Long spaceId, Long userId);
-
-	VaultSpace getSpaceById(Long id);
 
 	// ----files
 	VaultFile saveNewFile(MultipartFile file, Long userId, Long spaceId, Long parentId);

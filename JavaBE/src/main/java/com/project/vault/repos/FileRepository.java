@@ -13,5 +13,4 @@ public interface FileRepository extends JpaRepository<VaultFile, Long> {
 	List<VaultFile> findBySpaceIdAndParentFolderIsNull(Long spaceId);
 
 	List<VaultFile> findByParentFolderId(Long parentId);
-
 }

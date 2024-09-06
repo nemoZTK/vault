@@ -38,33 +38,34 @@ public class StorageController {
 	private VaultUserAuthenticationService authServ;
 
 	@PostMapping("/newspace")
-	String createNewSpace(@RequestBody NewSpaceRequest bodyReq, HttpServletRequest req) {
+	ResponseEntity<?> createNewSpace(@RequestBody NewSpaceRequest bodyReq, HttpServletRequest req) {
 		Long userId = bodyReq.userId();
 		JSONObject response = new JSONObject();
 		if (authServ.doAuthorizationCheck(req, userId)) {
 			response = storageServ.holdNewSpaceRequest(bodyReq.spaceName(), userId);
-			return response.toString();
+			return ResponseEntity.ok(response.toString());
 		}
-		return response.put("result", "bad credentials").toString();
+		return ResponseEntity.badRequest().body(response.put("result", "bad credentials").toString());
 
 	}
 
 	@PostMapping("/newfolder")
-	public String newFolder(@RequestBody NewFolderRequest bodyReq, HttpServletRequest req) {
+	ResponseEntity<?> newFolder(@RequestBody NewFolderRequest bodyReq, HttpServletRequest req) {
 		Long userId = bodyReq.userId();
 		JSONObject response = new JSONObject();
 		if (authServ.doAuthorizationCheck(req, userId)) {
-			response = storageServ.holdNewFolderRequest(userId, bodyReq.spaceId(), bodyReq.parentId(), bodyReq.name());
+			response = storageServ.holdNewFolderRequest(userId, bodyReq.spaceId(), bodyReq.parentId(),
+					bodyReq.name().toLowerCase());
 
-			return response.toString();
+			ResponseEntity.ok(response.toString());
 		}
-		return response.put("result", "bad credentials").toString();
+		return ResponseEntity.badRequest().body(response.put("result", "bad credentials").toString());
 	}
 
 	// --------------------------------------------------------------------------------------------------------------------------------------------------
 
 	@PostMapping("/upload")
-	public String upload(@RequestParam(name = "userId", required = true) Long userId,
+	ResponseEntity<?> upload(@RequestParam(name = "userId", required = true) Long userId,
 			@RequestParam(name = "spaceId", required = true) Long spaceId,
 			@RequestParam(name = "parentId", required = false) Long parentId,
 			@RequestParam(name = "file", required = true) MultipartFile file, HttpServletRequest req) {
@@ -74,13 +75,14 @@ public class StorageController {
 			if (file.isEmpty()) {
 				logger.error("il file è vuoto.");
 				response.put("result", "it seems an empty file");
-				return response.toString();
+				ResponseEntity.ok(response.toString());
 			}
 			response = storageServ.holdUploadRequest(userId, spaceId, parentId, file);
-			return response.toString();
+			ResponseEntity.ok(response.toString());
 		} else {
-			return response.put("result", "bad credentials").toString();
+			ResponseEntity.badRequest().body(response.put("result", "bad credentials").toString());
 		}
+		return null;
 	}
 
 	@PostMapping("/download")
