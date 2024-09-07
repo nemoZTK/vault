@@ -22,11 +22,13 @@
             <button class="grey-button download-button" @click.stop="downloadItem(folder.id, 'folder')">Download</button>
             <span>📁 {{ folder.name }}</span>
             <button class="grey-button rename-button" @click.stop="rename('folder', folder.id, folder.name)">Rename</button>
+            <button class="grey-button delete-button" @click.stop="deleteItem('folder', folder.id)">Delete</button>
           </li>
           <li v-for="file in files" :key="'file-' + file.id" class="file-item" @click="selectFile(file.id)">
             <span>📄 {{ file.name }} ({{ formatFileSize(file.size) }})</span>
             <button class="grey-button download-button" @click.stop="downloadItem(file.id, 'file')">Download</button>
             <button class="grey-button rename-button" @click.stop="rename('file', file.id, file.name)">Rename</button>
+            <button class="grey-button delete-button" @click.stop="deleteItem('file', file.id)">Delete</button>
           </li>
         </ul>
       </template>
@@ -40,25 +42,33 @@
         <img :src="selectedFileUrl" alt="Immagine selezionata" style="max-width: 70%; height: auto;" />
       </div>
     </div>
+    <ConfirmForm
+      v-if="isConfirmFormVisible"
+      :title="'Confirm Delete'"
+      :itemType="itemType"
+      @submit="handleDelete"
+      @close="isConfirmFormVisible = false"
+    />
   </div>
 </template>
-
-
 
 <script>
 import BaseMainBlock from '@/components/BaseMainBlock.vue';
 import InputForm from '../components/InsertNameForm.vue';
+import ConfirmForm from '../components/ConfirmDeleteForm.vue';
 import { uploadFile } from '@/utils/uploadHandler';
 import { createNewFolder } from '@/utils/folderGenerator';
 import { downloadItem } from '@/utils/downloadHandler';
 import { fetchFoldersAndFiles, goHome, goBack, formatFileSize } from '../utils/spaceContentHandler';
 import visualizeImage from '@/utils/visualizeImage';
-import { renameFile, renameFolder } from '@/utils/renameFolderAndFiles'; // Import the rename functions
+import { renameFile, renameFolder } from '@/utils/renameFolderAndFiles'; 
+import { deleteFile, deleteFolder } from '@/utils/holdDeleteFileAndFolders';
 
 export default {
   components: {
     BaseMainBlock,
-    InputForm
+    InputForm,
+    ConfirmForm
   },
   data() {
     return {
@@ -74,6 +84,8 @@ export default {
       selectedFileUrl: '',
       isInputFormVisible: false,
       itemToRename: null,
+      isConfirmFormVisible: false,
+      itemsToDelete: null,
       itemType: null,
     };
   },
@@ -158,6 +170,41 @@ export default {
         console.error('Failed to rename');
       }
       this.isInputFormVisible = false; // Hide input form
+    },
+    deleteItem(type, ids) {
+      this.itemType = type;
+      this.itemsToDelete = ids;
+      this.isConfirmFormVisible = true; 
+    },
+    async handleDelete() {
+      let success;
+      const currentFolderId = this.folderStack.length ? this.folderStack[this.folderStack.length - 1].id : null;
+      try {
+        if (this.itemType === 'file') {
+          // Gestisce l'eliminazione di file (array o singolo ID)
+          if (Array.isArray(this.itemsToDelete)) {
+            success = await deleteFile(this.itemsToDelete, this.userId);
+          } else {
+            success = await deleteFile([this.itemsToDelete], this.userId);
+          }
+        } else if (this.itemType === 'folder') {
+          // Gestisce l'eliminazione di una cartella (singolo ID)
+          success = await deleteFolder(this.itemsToDelete, this.userId);
+        }
+        if (success) {
+          // Aggiorna la lista dei file e delle cartelle
+          await this.fetchFoldersAndFiles(currentFolderId);
+       //      this.isConfirmFormVisible = false; o qui?
+        } else {
+          console.error(`Failed to delete ${this.deleteType}`);
+        }
+      } catch (error) {
+        console.error(`Errore durante l'eliminazione del ${this.deleteType}:`, error);
+      }
+      // Resetta lo stato dell'eliminazione
+      this.itemsToDelete = null;
+      this.itemType = null;
+      this.isConfirmFormVisible = false;
     }
   }
 };
@@ -186,7 +233,7 @@ export default {
   position: relative;
   padding: 5px;
 }
-
+.delete-button,
 .download-button, .rename-button {
   display: none;
   position: absolute;
@@ -194,14 +241,17 @@ export default {
   top: 50%;
   transform: translateY(-50%);
 }
-
+.delete-button{
+  margin-right: 15rem;
+}
 .rename-button{
   margin-right: 9rem;
 }
 
-
+.folder-item:hover .delete-button,
 .folder-item:hover .download-button,
 .folder-item:hover .rename-button,
+.file-item:hover .delete-button,
 .file-item:hover .rename-button,
 .file-item:hover .download-button {
   display: inline-block;
