@@ -1,0 +1,48 @@
+<configuration>
+
+    <!-- Definizione del converter custom -->
+    <conversionRule conversionWord="highlight"
+        converterClass="com.enginius.playwrightautomatedtests.util.logger.CustomLoggerUtil" />
+
+    <!-- Definizione del converter custom per il messaggio -->
+    <conversionRule conversionWord="highlightMsg"
+        converterClass="com.enginius.playwrightautomatedtests.util.logger.CustomMessageConverter" />
+
+    <appender name="Console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} %highlight(%level==[) %logger{5} %highlight(]===> %msg) %n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="CustomConsole" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} %highlight(%level--[) %logger{0} %highlight(]-->) %msg %n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="ResponseConsole" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} %highlight(%level)--[ %logger{0} ]--> %highlightMsg(%msg) %n</pattern>
+        </encoder>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="Console" />
+    </root>
+
+    <logger name="com.enginius.playwrightautomatedtests.services" level="TRACE"
+        additivity="false">
+        <appender-ref ref="CustomConsole" />
+    </logger>
+
+    <logger name="com.enginius.playwrightautomatedtests.util.handler"
+        level="DEBUG" additivity="false">
+        <appender-ref ref="ResponseConsole" />
+    </logger>
+
+    <logger name="com.enginius.playwrightautomatedtests.tests" level="DEBUG"
+        additivity="false">
+        <appender-ref ref="CustomConsole" />
+    </logger>
+
+</configuration>
