@@ -1,11 +1,13 @@
 <template>
-  <BaseForm title="Login" submitButtonText="Conferma" @submit="login" @close="hideForm">
+  <BaseForm title="Login" submitButtonText="Confirm" @submit="login" @close="hideForm">
     <template v-slot:form-fields>
       <input type="text" v-model="username" placeholder="Username" required />
+      <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
       <input type="password" v-model="password" placeholder="Password" required />
     </template>
+    <!-- Aggiungi il messaggio di errore -->
     <template v-slot:footer>
-      <p>Non hai un account? <button type="button" @click="switchToRegister">Registrati</button></p>
+      <p>Don't have an account?<button type="button" @click="switchToRegister">Sign-up!</button></p>
     </template>
   </BaseForm>
 </template>
@@ -20,6 +22,7 @@ export default {
     return {
       username: '',
       password: '',
+      errorMessage: '', // Variabile per memorizzare il messaggio di errore
     };
   },
   methods: {
@@ -32,7 +35,6 @@ export default {
         });
 
         if (response.status === 200) {
-          // Recupera la risposta del server
           const [id, token] = response.data.split('|');
 
           // Memorizza l'ID, il token e l'username nel localStorage
@@ -40,6 +42,7 @@ export default {
           localStorage.setItem('username', this.username);
           localStorage.setItem('id', id);
           console.log("done for ", this.username, id, token);
+
           // Aggiorna lo stato di Vuex
           this.$store.commit('login', { username: this.username, id, token });
 
@@ -48,8 +51,13 @@ export default {
           window.location.reload();
         }
       } catch (error) {
-        console.error('Errore:', error.response ? error.response.data : error.message);
-        alert('Errore durante il login. Per favore, riprova.');
+        if (error.response && error.response.status === 400) {
+          // Assegna il messaggio di errore se l'errore è 400
+          this.errorMessage = 'Wrong username or password';
+        } else {
+          console.error('Errore:', error.response ? error.response.data : error.message);
+          this.errorMessage = 'Errore durante il login. Per favore, riprova.';
+        }
       }
     },
     hideForm() {
@@ -61,8 +69,15 @@ export default {
   },
 };
 </script>
+
 <style scoped>
-.form-container .footer-slot button{
+.error-message {
+  color: var(--menu-font-color);
+  font-weight: bold;
+  margin-right: 1rem;
+  text-align: center;
+}
+.form-container .footer-slot button {
   margin-left: 1.55rem;
 }
 </style>

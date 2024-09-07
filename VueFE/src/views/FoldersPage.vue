@@ -32,7 +32,7 @@
       </template>
     </BaseMainBlock>
 
-    <InputForm v-if="isInputFormVisible" @submit="handleRename" @cancel="isInputFormVisible = false" />
+    <InputForm v-if="isInputFormVisible" @submit="handleRename" @close="isInputFormVisible = false" />
 
     <div v-if="isModalOpen" class="modal" @click.self="closeModal">
       <div class="modal-content">
@@ -143,14 +143,17 @@ export default {
     },
     async handleRename(newName) {
       let success;
+      const currentFolderId = this.folderStack.length ? this.folderStack[this.folderStack.length - 1].id : null;
+
       if (this.itemType === 'file') {
-        success = await renameFile(this.userId, this.itemToRename.id, newName);
+        success = await renameFile(this.userId, this.itemToRename.id, this.itemToRename.currentName, newName);
       } else if (this.itemType === 'folder') {
         success = await renameFolder(this.userId, this.itemToRename.id, newName);
       }
 
       if (success) {
-        await this.fetchFoldersAndFiles(); // Refresh the list
+        // Refresh the list with the current folder ID
+        await this.fetchFoldersAndFiles(currentFolderId);
       } else {
         console.error('Failed to rename');
       }

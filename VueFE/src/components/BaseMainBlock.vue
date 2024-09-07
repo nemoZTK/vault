@@ -72,6 +72,8 @@ export default {
   }
 };
 </script>
+
+
 <style scoped>
 @import '@/styles/scrollbar.css';
 
