@@ -1,5 +1,7 @@
 package com.project.vault.controllers;
 
+import java.util.List;
+
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,8 +11,10 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -123,6 +127,38 @@ public class StorageController {
 			return MediaType.IMAGE_GIF;
 		}
 		return MediaType.APPLICATION_OCTET_STREAM; // Default
+	}
+
+	@DeleteMapping("/delete/file")
+	ResponseEntity<?> deleteFile(@RequestBody DeleteFileRequest deleteReq, HttpServletRequest req) {
+		JSONObject response = new JSONObject();
+		if (authServ.doAuthorizationCheck(req, deleteReq.userId())) {
+			response = storageServ.holdFileDeleteRequest(deleteReq.fileIds(), deleteReq.userId());
+			return ResponseEntity.ok(response.toString());
+
+		} else {
+			return ResponseEntity.badRequest().body(response.put("result", "permission denied").toString());
+		}
+	}
+
+	@DeleteMapping("/delete/folder")
+	ResponseEntity<?> deleteFolder(@RequestBody DeleteFolderRequest deleteReq, HttpServletRequest req) {
+		JSONObject response = new JSONObject();
+		if (authServ.doAuthorizationCheck(req, deleteReq.userId())) {
+			response = storageServ.holdFolderDeleteRequest(deleteReq.folderId(), deleteReq.userId());
+			return ResponseEntity.ok(response.toString());
+
+		} else {
+			return ResponseEntity.badRequest().body(response.put("result", "permission denied").toString());
+		}
+	}
+
+	record DeleteFolderRequest(Long folderId, Long userId) {
+
+	}
+
+	record DeleteFileRequest(List<Long> fileIds, Long userId) {
+
 	}
 
 	// --------------------------------------------------------------------------------------------------------------------------------------------------

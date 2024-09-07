@@ -21,6 +21,8 @@ public class StorageService implements StorageServiceInterface {
 
 	@Autowired
 	FolderService folderServ;
+	@Autowired
+	FileManagerService fileManagerServ;
 
 	@Autowired
 	SpaceService spaceServ;
@@ -30,8 +32,8 @@ public class StorageService implements StorageServiceInterface {
 	// -------------------------------------------------------------------------------------------------------------------
 
 	public JSONObject getFolderContentById(Long folderId) {
-		List<VaultFile> files = fileServ.getFileByParentFolderId(folderId);
-		List<VaultFolder> folders = folderServ.getFoldersByFolderId(folderId);
+		List<VaultFile> files = fileServ.getCleanFileByParentFolderId(folderId);
+		List<VaultFolder> folders = folderServ.getCleanFoldersByFolderId(folderId);
 		JSONObject response = new JSONObject();
 		JSONArray fileArray = new JSONArray();
 		if (files != null) {
@@ -51,7 +53,7 @@ public class StorageService implements StorageServiceInterface {
 	}
 
 	public JSONObject getFileAndFolderWithParentNullBySpaceId(Long spaceId) {
-		List<VaultFile> files = fileServ.getFileWithNullParentBySpaceId(spaceId);
+		List<VaultFile> files = fileServ.getCleanFileWithNullParentBySpaceId(spaceId);
 		List<VaultFolder> folders = folderServ.getFolderWithNullParentBySpaceId(spaceId);
 		JSONObject response = new JSONObject();
 		JSONArray fileArray = new JSONArray();
@@ -120,6 +122,103 @@ public class StorageService implements StorageServiceInterface {
 		}
 
 		return null;
+	}
+
+	public JSONObject holdFolderDeleteRequest(Long folderId, Long userId) {
+		JSONObject response = new JSONObject();
+		if (!folderServ.existsById(folderId)) {
+			return response.put("result", "invalid folderId");
+		}
+		if (!folderServ.isHimTheFolderOwner(folderId, userId)) {
+			return response.put("result", "you are not the folder owner.");
+		}
+
+		boolean isDone = deleteFolderRecursively(folderId);
+		if (isDone) {
+			return response.put("result", "folder deleted successfully");
+		} else {
+			return response.put("result", "error during folder deletion");
+		}
+	}
+
+	private boolean deleteFolderRecursively(Long folderId) {
+		List<VaultFile> files = fileServ.getFileByParentFolderId(folderId);
+		List<VaultFolder> folders = folderServ.getFoldersByFolderId(folderId);
+		// Delete all files in the folder
+		for (VaultFile file : files) {
+			boolean fileDeleted = deleteFile(file.getId());
+			if (!fileDeleted) {
+				return false; // Abort if any file deletion fails
+			}
+		}
+
+		// Delete all subfolders
+		for (VaultFolder folder : folders) {
+			boolean folderDeleted = deleteFolderRecursively(folder.getId());
+			if (!folderDeleted) {
+				return false; // Abort if any subfolder deletion fails
+			}
+		}
+
+		// Finally, delete the folder itself
+		VaultFolder folder = folderServ.getFolderById(folderId);
+		String knownPath = "/" + folder.getVaultUser().getUsername() + "/" + folder.getSpace().getName();
+		if (folder.getParentFolder() != null) {
+			String folderPath = folderServ.getFullPathById(folderId);
+			knownPath += folderPath;
+		} else {
+			knownPath += "/" + folder.getName();
+		}
+
+		if (fileManagerServ.deleteFolder(knownPath)) {
+			folderServ.folderRepo.deleteById(folderId); // Delete folder from DB
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public JSONObject holdFileDeleteRequest(List<Long> fileIds, Long userId) {
+		JSONObject response = new JSONObject();
+		for (Long fileId : fileIds) {
+			VaultFile file = fileServ.getFileById(fileId);
+			if (file == null) {
+				continue; // Skip if file not found
+			}
+			if (!fileServ.isHimTheFileOwner(fileId, userId)) {
+				return response.put("result", "you are not the file owner for fileId: " + fileId);
+			}
+
+			boolean isDone = deleteFile(fileId);
+			if (!isDone) {
+				return response.put("result", "error during deletion of fileId: " + fileId);
+			}
+		}
+		return response.put("result", "files deleted successfully");
+	}
+
+	private boolean deleteFile(Long fileId) {
+		VaultFile file = fileServ.getFileById(fileId);
+		if (file == null) {
+			return false; // File not found
+		}
+		String knownPath = "/" + file.getVaultUser().getUsername() + "/" + file.getSpace().getName();
+		logger.info("actual known path--->" + knownPath);
+		if (file.getParentFolder() != null) {
+			String folderPath = folderServ.getFullPathById(file.getParentFolder().getId());
+			knownPath += folderPath + "/" + file.getName();
+			logger.info("actual known path--->" + knownPath);
+		} else {
+			knownPath += "/" + file.getName();
+			logger.info("actual known path--->" + knownPath);
+		}
+
+		if (fileManagerServ.deleteFile(knownPath)) {
+			fileServ.fileRepo.deleteById(fileId); // Delete file from DB
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	// TODO:delete file

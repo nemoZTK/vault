@@ -118,27 +118,42 @@ public class FileManagerService implements FileManagerInterface {
 		}
 	}
 
-	public Boolean deleteFile(String knownPath) {
-		if (knownPath == null) {
-			logger.error("null path");
-			return false;
-		}
-
-		Path filePath = Paths.get(basePath + knownPath).normalize();
-
-		logger.trace("Deleting file at: " + filePath.toString());
-
+	public Boolean deleteFolder(String knownPath) {
+		Path folderPath = Paths.get(basePath + knownPath).normalize();
 		try {
-			if (Files.exists(filePath)) {
-				Files.delete(filePath);
-				logger.info("File deleted successfully at: " + filePath.toString());
+			if (Files.exists(folderPath) && Files.isDirectory(folderPath)) {
+				Files.walk(folderPath).sorted((path1, path2) -> path2.compareTo(path1)).forEach(path -> {
+					try {
+						Files.delete(path);
+					} catch (IOException e) {
+						logger.error("Failed to delete file at: " + path, e);
+					}
+				});
+				logger.info("Folder deleted successfully at: " + folderPath.toString());
 				return true;
 			} else {
-				logger.warn("File does not exist at path: " + filePath.toString());
+				logger.error("Folder does not exist or is not a directory at path: " + folderPath);
 				return false;
 			}
 		} catch (IOException e) {
-			logger.error("Failed to delete file at: " + filePath.toString(), e);
+			logger.error("Failed to delete folder at: " + folderPath, e);
+			return false;
+		}
+	}
+
+	public Boolean deleteFile(String knownPath) {
+		Path path = Paths.get(basePath + knownPath).normalize();
+		try {
+			if (Files.exists(path)) {
+				Files.delete(path);
+				logger.info("File deleted successfully at: " + path);
+				return true;
+			} else {
+				logger.error("File does not exist at path: " + path);
+				return false;
+			}
+		} catch (IOException e) {
+			logger.error("Failed to delete file at: " + path, e);
 			return false;
 		}
 	}

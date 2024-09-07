@@ -33,12 +33,20 @@ public class FileService implements FileServiceInterface {
 
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 
-	public List<VaultFile> getFileByParentFolderId(Long folderId) {
-		if (folderServ.existsById(folderId)) {
-			List<VaultFile> files = fileRepo.findByParentFolderId(folderId);
+	public List<VaultFile> getCleanFileByParentFolderId(Long folderId) {
+		List<VaultFile> files = getFileByParentFolderId(folderId);
+		if (files != null) {
 			for (VaultFile file : files) {
 				cleanVaultFile(file);
 			}
+			return files;
+		}
+		return null;
+	}
+
+	public List<VaultFile> getFileByParentFolderId(Long folderId) {
+		if (folderServ.existsById(folderId)) {
+			List<VaultFile> files = fileRepo.findByParentFolderId(folderId);
 			return files;
 		}
 		return null;
@@ -53,7 +61,7 @@ public class FileService implements FileServiceInterface {
 
 	}
 
-	public List<VaultFile> getFileWithNullParentBySpaceId(Long spaceId) {
+	public List<VaultFile> getCleanFileWithNullParentBySpaceId(Long spaceId) {
 		if (spaceServ.existsById(spaceId)) {
 			List<VaultFile> files = fileRepo.findBySpaceIdAndParentFolderIsNull(spaceId);
 			for (VaultFile file : files) {

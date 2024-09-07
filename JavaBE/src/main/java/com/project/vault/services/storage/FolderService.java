@@ -69,13 +69,22 @@ public class FolderService implements FolderServiceInterface {
 		return folder;
 	}
 
-	public List<VaultFolder> getFoldersByFolderId(Long folderId) {
-		if (folderRepo.existsById(folderId)) {
-			List<VaultFolder> folders = folderRepo.findByParentFolderId(folderId);
+	public List<VaultFolder> getCleanFoldersByFolderId(Long folderId) {
+		List<VaultFolder> folders = getFoldersByFolderId(folderId);
+		if (folders != null) {
 			for (VaultFolder folder : folders) {
 				cleanVaultFolder(folder);
 			}
 
+			return folders;
+		}
+
+		return null;
+	}
+
+	public List<VaultFolder> getFoldersByFolderId(Long folderId) {
+		if (folderRepo.existsById(folderId)) {
+			List<VaultFolder> folders = folderRepo.findByParentFolderId(folderId);
 			return folders;
 		}
 		return null;
@@ -226,5 +235,4 @@ public class FolderService implements FolderServiceInterface {
 		}
 
 	}
-
 }
