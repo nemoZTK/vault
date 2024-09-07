@@ -492,7 +492,7 @@ public class StorageService implements StorageServiceInterface {
 	}
 
 	public JSONObject holdRenameFolderRequest(Long userId, Long folderId, String newName) {
-		if (folderId == null || !folderRepo.existsById(folderId) || !isHimTheFileOwner(folderId, userId)) {
+		if (folderId == null || !folderRepo.existsById(folderId) || !isHimTheFolderOwner(folderId, userId)) {
 			return null;
 		}
 		JSONObject vaultFileObj = new JSONObject();

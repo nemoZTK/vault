@@ -201,10 +201,10 @@ public class StorageController {
 	}
 
 	@PutMapping("/rename/file")
-	public ResponseEntity<?> renameFile(@RequestBody Long fileId, Long userId, String newName, HttpServletRequest req) {
+	public ResponseEntity<?> renameFile(@RequestBody RenameFileRequest renameFile, HttpServletRequest req) {
 		JSONObject response = new JSONObject();
-		if (authServ.doAuthorizationCheck(req, userId)) {
-			response = storageServ.holdRenameFileRequest(userId, fileId, newName);
+		if (authServ.doAuthorizationCheck(req, renameFile.userId)) {
+			response = storageServ.holdRenameFileRequest(renameFile.userId, renameFile.fileId, renameFile.newName);
 			if (response != null) {
 				return ResponseEntity.ok(response.toString());
 			}
@@ -214,11 +214,10 @@ public class StorageController {
 	}
 
 	@PutMapping("/rename/folder")
-	public ResponseEntity<?> renameFolder(@RequestBody Long folderId, Long userId, String newName,
-			HttpServletRequest req) {
+	public ResponseEntity<?> renameFolder(@RequestBody RenameFolderRequest folderReq, HttpServletRequest req) {
 		JSONObject response = new JSONObject();
-		if (authServ.doAuthorizationCheck(req, userId)) {
-			response = storageServ.holdRenameFolderRequest(userId, folderId, newName);
+		if (authServ.doAuthorizationCheck(req, folderReq.userId)) {
+			response = storageServ.holdRenameFolderRequest(folderReq.userId, folderReq.folderId, folderReq.newName);
 			if (response != null) {
 				return ResponseEntity.ok(response.toString());
 			}
@@ -228,6 +227,14 @@ public class StorageController {
 	}
 
 	record NewFolderRequest(Long userId, Long spaceId, Long parentId, String name) {
+	}
+
+	record RenameFileRequest(Long userId, String newName, Long fileId) {
+
+	}
+
+	record RenameFolderRequest(Long userId, String newName, Long folderId) {
+
 	}
 
 	record NewSpaceRequest(Long userId, String spaceName) {
