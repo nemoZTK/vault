@@ -50,6 +50,11 @@ public class FolderService implements FolderServiceInterface {
 		return fullPath.toString();
 	}
 
+	public String buildKnownFolderPath(VaultFolder folder) {
+		return "/" + folder.getVaultUser().getUsername() + folder.getVaultUser().getId() + "/"
+				+ folder.getSpace().getName();
+	}
+
 	// --------------------------------FOLDER-----------------------------------------------------------------------------------
 
 	public VaultFolder getFolderById(Long id) {
@@ -129,7 +134,7 @@ public class FolderService implements FolderServiceInterface {
 		folder.setVaultUser(user);
 		folder.setSpace(space);
 		folder.setName(name);
-		completePath = "/" + user.getUsername() + "/" + space.getName();
+		completePath = buildKnownFolderPath(folder);
 		if (parentId != null) {
 			parentFolder = getFolderById(parentId);
 			if (parentFolder != null && isHimTheFolderOwner(parentId, userId)) {
@@ -214,8 +219,9 @@ public class FolderService implements FolderServiceInterface {
 	}
 
 	private VaultFolder renameFolder(VaultFolder vaultFolder, String newName) {
-		String knownPath = "/" + vaultFolder.getVaultUser().getUsername() + "/" + vaultFolder.getSpace().getName();
+
 		String foldersPath = null;
+		String knownPath = buildKnownFolderPath(vaultFolder);
 		if (vaultFolder.getParentFolder() != null) {
 			foldersPath = getFullPathById(vaultFolder.getParentFolder().getId());
 		}

@@ -77,16 +77,16 @@ public class VaultUserAuthenticationService {
 		savedUser.setCreatedAt(LocalDateTime.now());
 		String pwd = user.getPassword();
 		savedUser.setPassword(encoder.encode(user.getPassword()));
-		isDone = fileManagerServ.createFolder("/" + user.getUsername());
-		if (isDone) {
-			try {
-				userRepo.save(savedUser);
-				return savedUser;
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+
+		try {
+			savedUser = userRepo.save(savedUser);
+			fileManagerServ.createFolder("/" + user.getUsername() + savedUser.getId());
+			return savedUser;
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		return null;
+
 	}
 
 	public Boolean doAuthorizationCheck(HttpServletRequest req, Long userId) {

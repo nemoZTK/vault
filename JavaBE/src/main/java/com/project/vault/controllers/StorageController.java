@@ -14,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -130,35 +129,27 @@ public class StorageController {
 	}
 
 	@DeleteMapping("/delete/file")
-	ResponseEntity<?> deleteFile(@RequestBody DeleteFileRequest deleteReq, HttpServletRequest req) {
+	public ResponseEntity<?> deleteFile(@RequestParam List<Long> fileIds, @RequestParam Long userId,
+			HttpServletRequest req) {
 		JSONObject response = new JSONObject();
-		if (authServ.doAuthorizationCheck(req, deleteReq.userId())) {
-			response = storageServ.holdFileDeleteRequest(deleteReq.fileIds(), deleteReq.userId());
+		if (authServ.doAuthorizationCheck(req, userId)) {
+			response = storageServ.holdFileDeleteRequest(fileIds, userId);
 			return ResponseEntity.ok(response.toString());
-
 		} else {
 			return ResponseEntity.badRequest().body(response.put("result", "permission denied").toString());
 		}
 	}
 
 	@DeleteMapping("/delete/folder")
-	ResponseEntity<?> deleteFolder(@RequestBody DeleteFolderRequest deleteReq, HttpServletRequest req) {
+	public ResponseEntity<?> deleteFolder(@RequestParam Long folderId, @RequestParam Long userId,
+			HttpServletRequest req) {
 		JSONObject response = new JSONObject();
-		if (authServ.doAuthorizationCheck(req, deleteReq.userId())) {
-			response = storageServ.holdFolderDeleteRequest(deleteReq.folderId(), deleteReq.userId());
+		if (authServ.doAuthorizationCheck(req, userId)) {
+			response = storageServ.holdFolderDeleteRequest(folderId, userId);
 			return ResponseEntity.ok(response.toString());
-
 		} else {
 			return ResponseEntity.badRequest().body(response.put("result", "permission denied").toString());
 		}
-	}
-
-	record DeleteFolderRequest(Long folderId, Long userId) {
-
-	}
-
-	record DeleteFileRequest(List<Long> fileIds, Long userId) {
-
 	}
 
 	// --------------------------------------------------------------------------------------------------------------------------------------------------

@@ -162,7 +162,7 @@ public class StorageService implements StorageServiceInterface {
 
 		// Finally, delete the folder itself
 		VaultFolder folder = folderServ.getFolderById(folderId);
-		String knownPath = "/" + folder.getVaultUser().getUsername() + "/" + folder.getSpace().getName();
+		String knownPath = folderServ.buildKnownFolderPath(folder);
 		if (folder.getParentFolder() != null) {
 			String folderPath = folderServ.getFullPathById(folderId);
 			knownPath += folderPath;
@@ -202,7 +202,7 @@ public class StorageService implements StorageServiceInterface {
 		if (file == null) {
 			return false; // File not found
 		}
-		String knownPath = "/" + file.getVaultUser().getUsername() + "/" + file.getSpace().getName();
+		String knownPath = fileServ.buildKnownFilePath(file);
 		logger.info("actual known path--->" + knownPath);
 		if (file.getParentFolder() != null) {
 			String folderPath = folderServ.getFullPathById(file.getParentFolder().getId());

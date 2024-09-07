@@ -44,6 +44,10 @@ public class FileService implements FileServiceInterface {
 		return null;
 	}
 
+	public String buildKnownFilePath(VaultFile file) {
+		return "/" + file.getVaultUser().getUsername() + file.getVaultUser().getId() + "/" + file.getSpace().getName();
+	}
+
 	public List<VaultFile> getFileByParentFolderId(Long folderId) {
 		if (folderServ.existsById(folderId)) {
 			List<VaultFile> files = fileRepo.findByParentFolderId(folderId);
@@ -80,7 +84,7 @@ public class FileService implements FileServiceInterface {
 
 			if (spaceServ.isHimTheSpaceOwner(spaceId, userId)) {
 
-				path = "/" + userAuthServ.getUsernameById(userId) + "/" + spaceServ.findNameById(spaceId);
+				path = "/" + userAuthServ.getUsernameById(userId) + userId + "/" + spaceServ.findNameById(spaceId);
 				fileInfo = getFileById(fileId);
 				if (fileInfo.getParentFolder() == null) {
 
@@ -118,8 +122,9 @@ public class FileService implements FileServiceInterface {
 	}
 
 	public VaultFile renameFile(VaultFile vaultFile, String newName) {
-		String knownPath = "/" + vaultFile.getVaultUser().getUsername() + "/" + vaultFile.getSpace().getName();
+
 		String foldersPath = null;
+		String knownPath = buildKnownFilePath(vaultFile);
 		if (vaultFile.getParentFolder() != null) {
 			foldersPath = folderServ.getFullPathById(vaultFile.getParentFolder().getId());
 		}
@@ -187,8 +192,7 @@ public class FileService implements FileServiceInterface {
 		vaultFile.setSpace(space);
 		vaultFile.setSize(file.getSize());
 		vaultFile.setType(file.getContentType());
-
-		completePath = "/" + user.getUsername() + "/" + space.getName();
+		completePath = buildKnownFilePath(vaultFile);
 		if (parentId == null) {
 			vaultFile.setParentFolder(null);
 			completePath += "/" + vaultFile.getName();

@@ -89,7 +89,7 @@ public class SpaceService implements SpaceServiceInterface {
 			// no user
 			return null;
 		}
-		String knownPath = "/" + user.getUsername() + "/" + space.getName();
+		String knownPath = "/" + user.getUsername() + user.getId() + "/" + space.getName();
 		isDone = fileManagerServ.createFolder(knownPath);
 		if (isDone) {
 			try {
