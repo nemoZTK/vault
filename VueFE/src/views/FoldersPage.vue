@@ -11,7 +11,7 @@
           <button class="grey-button" @click="goBack" :disabled="!folderStack.length">Back</button>
         </div>
         <div>
-          <input type="file" ref="fileInput" style="display: none" @change="handleFileChange" webkitdirectory />
+          <input type="file" ref="fileInput" style="display: none" @change="handleFileChange" />
           <button class="grey-button" @click="triggerFileInput">Upload</button>
         </div>
       </template>
@@ -19,28 +19,42 @@
         <ul>
           <li v-for="folder in folders" :key="'folder-' + folder.id" class="folder-item"
             @click="selectFolder(folder.id, folder.name)">
-            <button class="grey-button download-button"
-              @click.stop="downloadItem(folder.id, 'folder')">Download</button>
+            <button class="grey-button download-button" @click.stop="downloadItem(folder.id, 'folder')">Download</button>
             <span>📁 {{ folder.name }}</span>
+            <button class="grey-button rename-button" @click.stop="rename('folder', folder.id, folder.name)">Rename</button>
           </li>
           <li v-for="file in files" :key="'file-' + file.id" class="file-item" @click="selectFile(file.id)">
             <span>📄 {{ file.name }} ({{ formatFileSize(file.size) }})</span>
             <button class="grey-button download-button" @click.stop="downloadItem(file.id, 'file')">Download</button>
+            <button class="grey-button rename-button" @click.stop="rename('file', file.id, file.name)">Rename</button>
           </li>
         </ul>
       </template>
     </BaseMainBlock>
+
+    <InputForm v-if="isInputFormVisible" @submit="handleRename" @cancel="isInputFormVisible = false" />
+
+    <div v-if="isModalOpen" class="modal" @click.self="closeModal">
+      <div class="modal-content">
+        <span class="close" @click="closeModal">&times;</span>
+        <img :src="selectedFileUrl" alt="Immagine selezionata" style="max-width: 70%; height: auto;" />
+      </div>
+    </div>
   </div>
 </template>
 
 
+
 <script>
 import BaseMainBlock from '@/components/BaseMainBlock.vue';
+import InputForm from '../components/InsertNameForm.vue';
 import { uploadFile } from '@/utils/uploadHandler';
 import { createNewFolder } from '@/utils/folderGenerator';
-import { downloadItem } from '@/utils/downloadHandler'; 
-import protectedApiClient from '../protectedApiClient';
-import InputForm from '../components/InsertNameForm.vue';
+import { downloadItem } from '@/utils/downloadHandler';
+import { fetchFoldersAndFiles, goHome, goBack, formatFileSize } from '../utils/spaceContentHandler';
+import visualizeImage from '@/utils/visualizeImage';
+import { renameFile, renameFolder } from '@/utils/renameFolderAndFiles'; // Import the rename functions
+
 export default {
   components: {
     BaseMainBlock,
@@ -55,7 +69,12 @@ export default {
       whereWeAre: 'spazi',
       folderStack: [],
       currentFolderName: '',
-      selectedFile: null
+      selectedFile: null,
+      isModalOpen: false,
+      selectedFileUrl: '',
+      isInputFormVisible: false,
+      itemToRename: null,
+      itemType: null,
     };
   },
   async mounted() {
@@ -64,75 +83,35 @@ export default {
     this.whereWeAre = localStorage.getItem('selectedSpaceName');
 
     if (this.spaceId && this.userId) {
-      await this.fetchFoldersAndFiles();
+      await fetchFoldersAndFiles(this);
     }
   },
   methods: {
     async fetchFoldersAndFiles(folderId = null) {
-      try {
-        const endpoint = folderId ? '/storage/folder' : '/storage/spaces';
-        const params = folderId
-          ? { userId: this.userId, folderId: folderId }
-          : { userId: this.userId, spaceId: this.spaceId };
-
-        const response = await protectedApiClient.get(endpoint, { params });
-
-        this.folders = response.data.folders || [];
-        this.files = response.data.files || [];
-
-        if (folderId !== null) {
-          if (!this.folderStack.length || this.folderStack[this.folderStack.length - 1].id !== folderId) {
-            const currentFolder = this.folders.find(folder => folder.id === folderId);
-            if (currentFolder) {
-              this.currentFolderName = currentFolder.name;
-            }
-            this.folderStack.push({ id: folderId, name: this.currentFolderName });
-          }
-        } else {
-          this.folderStack = [];
-          this.currentFolderName = '';
-        }
-      } catch (error) {
-        console.error('Errore nel recupero di cartelle e file:', error);
-      }
+      await fetchFoldersAndFiles(this, folderId);
     },
     createNewFolder(folderName) {
-      createNewFolder(this.userId, this.spaceId, this.folderStack, this.fetchFoldersAndFiles,folderName);
+      createNewFolder(this.userId, this.spaceId, this.folderStack, this.fetchFoldersAndFiles, folderName);
     },
     selectFolder(folderId, folderName) {
       this.currentFolderName = folderName;
       this.fetchFoldersAndFiles(folderId);
     },
-    selectFile(fileId) {
+    async selectFile(fileId) {
       localStorage.setItem('selectedFileId', fileId);
       console.log(`File ID ${fileId} selezionato.`);
+      await visualizeImage.openImage(fileId, this.userId, this.spaceId);
+      this.selectedFileUrl = visualizeImage.selectedFileUrl;
+      this.isModalOpen = true;
     },
     async goHome() {
-      this.folderStack = [];
-      this.currentFolderName = '';
-      await this.fetchFoldersAndFiles();
+      await goHome(this);
     },
     async goBack() {
-      if (this.folderStack.length > 0) {
-        const currentFolder = this.folderStack.pop();
-        const previousFolder = this.folderStack.length ? this.folderStack[this.folderStack.length - 1] : null;
-
-        if (previousFolder) {
-          this.currentFolderName = previousFolder.name;
-        } else {
-          this.currentFolderName = '';
-        }
-
-        try {
-          await this.fetchFoldersAndFiles(previousFolder ? previousFolder.id : null);
-        } catch (error) {
-          console.error('Errore nel caricamento della cartella precedente:', error);
-        }
-      }
+      await goBack(this);
     },
     formatFileSize(size) {
-      const i = Math.floor(Math.log(size) / Math.log(1024));
-      return (size / Math.pow(1024, i)).toFixed(2) * 1 + ' ' + ['B', 'kB', 'MB', 'GB', 'TB'][i];
+      return formatFileSize(size);
     },
     triggerFileInput() {
       this.$refs.fileInput.click();
@@ -149,10 +128,38 @@ export default {
     },
     downloadItem(id, type) {
       downloadItem(id, type);
+    },
+    closeModal() {
+      this.isModalOpen = false;
+      if (this.selectedFileUrl) {
+        URL.revokeObjectURL(this.selectedFileUrl);
+        this.selectedFileUrl = null;
+      }
+    },
+    rename(type, id, currentName) {
+      this.itemToRename = { id, currentName };
+      this.itemType = type;
+      this.isInputFormVisible = true; 
+    },
+    async handleRename(newName) {
+      let success;
+      if (this.itemType === 'file') {
+        success = await renameFile(this.userId, this.itemToRename.id, newName);
+      } else if (this.itemType === 'folder') {
+        success = await renameFolder(this.userId, this.itemToRename.id, newName);
+      }
+
+      if (success) {
+        await this.fetchFoldersAndFiles(); // Refresh the list
+      } else {
+        console.error('Failed to rename');
+      }
+      this.isInputFormVisible = false; // Hide input form
     }
   }
 };
 </script>
+
 <style scoped>
 .folders ul {
   list-style-type: none;
@@ -177,7 +184,7 @@ export default {
   padding: 5px;
 }
 
-.download-button {
+.download-button, .rename-button {
   display: none;
   position: absolute;
   right: 10px;
@@ -185,7 +192,14 @@ export default {
   transform: translateY(-50%);
 }
 
+.rename-button{
+  margin-right: 9rem;
+}
+
+
 .folder-item:hover .download-button,
+.folder-item:hover .rename-button,
+.file-item:hover .rename-button,
 .file-item:hover .download-button {
   display: inline-block;
 }

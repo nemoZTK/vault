@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -57,6 +58,7 @@ public class StorageController {
 			response = storageServ.holdNewFolderRequest(userId, bodyReq.spaceId(), bodyReq.parentId(), bodyReq.name());
 
 			return response.toString();
+			return ResponseEntity.ok(response.toString());
 		}
 		return response.put("result", "bad credentials").toString();
 	}
@@ -78,6 +80,7 @@ public class StorageController {
 			}
 			response = storageServ.holdUploadRequest(userId, spaceId, parentId, file);
 			return response.toString();
+			return ResponseEntity.ok(response.toString());
 		} else {
 			return response.put("result", "bad credentials").toString();
 		}
@@ -122,6 +125,7 @@ public class StorageController {
 			Resource resource = storageServ.holdDownloadRequest(userId, spaceId, folderId, fileId);
 			if (resource != null && resource.exists()) {
 				MediaType mediaType = determineMediaType(resource.getFilename());
+
 				ResponseEntity.BodyBuilder responseBuilder = ResponseEntity.ok().contentType(mediaType);
 				responseBuilder.header(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, "Content-Disposition");
 
@@ -190,6 +194,33 @@ public class StorageController {
 		JSONObject response = new JSONObject();
 		if (authServ.doAuthorizationCheck(req, userId) && storageServ.isHimTheFolderOwner(folderId, userId)) {
 			response = storageServ.getFolderContentById(folderId);
+			if (response != null) {
+				return ResponseEntity.ok(response.toString());
+			}
+			return ResponseEntity.badRequest().body(response.put("result", "bad result").toString());
+		}
+		return ResponseEntity.badRequest().body(response.put("result", "permission denied").toString());
+	}
+
+	@PutMapping("/rename/file")
+	public ResponseEntity<?> renameFile(@RequestBody Long fileId, Long userId, String newName, HttpServletRequest req) {
+		JSONObject response = new JSONObject();
+		if (authServ.doAuthorizationCheck(req, userId)) {
+			response = storageServ.holdRenameFileRequest(userId, fileId, newName);
+			if (response != null) {
+				return ResponseEntity.ok(response.toString());
+			}
+			return ResponseEntity.badRequest().body(response.put("result", "bad result").toString());
+		}
+		return ResponseEntity.badRequest().body(response.put("result", "permission denied").toString());
+	}
+
+	@PutMapping("/rename/folder")
+	public ResponseEntity<?> renameFolder(@RequestBody Long folderId, Long userId, String newName,
+			HttpServletRequest req) {
+		JSONObject response = new JSONObject();
+		if (authServ.doAuthorizationCheck(req, userId)) {
+			response = storageServ.holdRenameFolderRequest(userId, folderId, newName);
 			if (response != null) {
 				return ResponseEntity.ok(response.toString());
 			}

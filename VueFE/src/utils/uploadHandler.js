@@ -22,16 +22,14 @@ export async function uploadFile(selectedFile, userId, spaceId, folderStack, fet
     if (response.status === 200) {
       const responseData = response.data;
       if (responseData.result === 'done') {
-        alert(`File "${responseData.name}" caricato con successo!`);
+
         await fetchFoldersAndFiles(folderStack.length ? folderStack[folderStack.length - 1].id : null);
       } else {
-        alert('Errore nel caricamento del file.');
       }
     } else {
-      alert('Errore nella risposta del server.');
     }
   } catch (error) {
     console.error('Errore durante il caricamento del file:', error);
-    alert('Errore durante il caricamento del file.');
+
   }
 }

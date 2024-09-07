@@ -1,10 +1,8 @@
-import protectedApiClient from '../protectedApiClient';
+// downloadHandler.js
 
-/**
- * Gestisce il download di file e cartelle.
- * @param {number} id - L'ID del file o della cartella.
- * @param {string} type - Il tipo di elemento da scaricare ('file' o 'folder').
- */
+
+import protectedApiClient from '@/protectedApiClient';
+
 export async function downloadItem(id, type) {
     if (!id || !type) {
         console.error('ID e tipo di elemento sono obbligatori per il download.');
@@ -41,13 +39,9 @@ export async function downloadItem(id, type) {
         const response = await protectedApiClient.get(endpoint, { params, responseType: 'blob', withCredentials: true });
 
         if (response.status === 200) {
-            console.log(response.headers);
             const contentDisposition = response.headers['content-disposition'];
-
-            console.log("La contentDisposition è ---> " + contentDisposition);
             let filename = 'downloaded_file';
 
-            // Estrai il nome del file dalla content-disposition
             if (contentDisposition) {
                 const filenameMatch = contentDisposition.match(/filename="(.+)"/);
                 if (filenameMatch.length === 2) {
@@ -55,9 +49,6 @@ export async function downloadItem(id, type) {
                 }
             }
 
-            console.log("File name ottenuto ---> " + filename);
-
-            // Crea un URL per il blob e scarica il file
             const url = URL.createObjectURL(response.data);
             const link = document.createElement('a');
             link.href = url;
@@ -66,8 +57,6 @@ export async function downloadItem(id, type) {
             link.click();
             document.body.removeChild(link);
             URL.revokeObjectURL(url);
-        } else if (response.status === 400) {
-            console.error('Errore nella richiesta di download: la richiesta non è andata a buon fine.');
         } else {
             console.error('Errore sconosciuto durante il download.');
         }

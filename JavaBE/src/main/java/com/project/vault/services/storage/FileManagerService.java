@@ -80,4 +80,45 @@ public class FileManagerService implements FileManagerInterface {
 		}
 		return null;
 	}
+
+	public Boolean renameFile(String knownOldPath, String newFileName) {
+		Path sourcePath = Paths.get(basePath + knownOldPath).normalize();
+
+		Path targetPath = sourcePath.resolveSibling(newFileName).normalize();
+		String g;
+
+		try {
+			if (Files.exists(sourcePath)) {
+				Files.move(sourcePath, targetPath);
+				logger.info("File renamed successfully from: " + sourcePath + " to: " + targetPath);
+				return true;
+			} else {
+				logger.error("File does not exist at path: " + sourcePath);
+				return false;
+			}
+		} catch (IOException e) {
+			logger.error("Failed to rename file from: " + sourcePath + " to: " + targetPath, e);
+			return false;
+		}
+	}
+
+	public Boolean renameFolder(String knownPath, String newFolderName) {
+		Path sourcePath = Paths.get(basePath + knownPath).normalize();
+		Path targetPath = sourcePath.resolveSibling(newFolderName).normalize();
+
+		try {
+			if (Files.exists(sourcePath) && Files.isDirectory(sourcePath)) {
+				Files.move(sourcePath, targetPath);
+				logger.info("Folder renamed successfully from: " + sourcePath + " to: " + targetPath);
+				return true;
+			} else {
+				logger.error("Folder does not exist or is not a directory at path: " + sourcePath);
+				return false;
+			}
+		} catch (IOException e) {
+			logger.error("Failed to rename folder from: " + sourcePath + " to: " + targetPath, e);
+			return false;
+		}
+	}
+
 }

@@ -124,14 +124,19 @@ public class StorageService implements StorageServiceInterface {
 	}
 
 	// -------------------------------------------------------------------------------------------------
+	public VaultFolder cleanVaultFolder(VaultFolder folder) {
+		folder.setSpace(null);
+		folder.setVaultUser(null);
+		folder.setSection(null);
+		folder.setParentFolder(null);
+		return folder;
+	}
 
 	public List<VaultFolder> getFoldersByFolderId(Long folderId) {
 		if (folderRepo.existsById(folderId)) {
 			List<VaultFolder> folders = folderRepo.findByParentFolderId(folderId);
 			for (VaultFolder folder : folders) {
-				folder.setSpace(null);
-				folder.setVaultUser(null);
-				folder.setSection(null);
+				cleanVaultFolder(folder);
 			}
 
 			return folders;
@@ -143,9 +148,7 @@ public class StorageService implements StorageServiceInterface {
 		if (folderRepo.existsById(folderId)) {
 			List<VaultFile> files = fileRepo.findByParentFolderId(folderId);
 			for (VaultFile file : files) {
-				file.setSpace(null);
-				file.setVaultUser(null);
-				file.setSection(null);
+				cleanVaultFile(file);
 			}
 			return files;
 		}
@@ -177,9 +180,7 @@ public class StorageService implements StorageServiceInterface {
 		if (spaceRepo.existsById(spaceId)) {
 			List<VaultFolder> folders = folderRepo.findBySpaceIdAndParentFolderIsNull(spaceId);
 			for (VaultFolder folder : folders) {
-				folder.setSpace(null);
-				folder.setVaultUser(null);
-				folder.setSection(null);
+				cleanVaultFolder(folder);
 			}
 
 			return folders;
@@ -191,9 +192,7 @@ public class StorageService implements StorageServiceInterface {
 		if (spaceRepo.existsById(spaceId)) {
 			List<VaultFile> files = fileRepo.findBySpaceIdAndParentFolderIsNull(spaceId);
 			for (VaultFile file : files) {
-				file.setSpace(null);
-				file.setVaultUser(null);
-				file.setSection(null);
+				cleanVaultFile(file);
 			}
 			return files;
 		}
@@ -327,10 +326,16 @@ public class StorageService implements StorageServiceInterface {
 
 	}
 
+	public VaultSpace cleanVaultSpace(VaultSpace space) {
+		space.setVaultUser(null);
+		space.setVaultUser(null);
+		return space;
+	}
+
 	public List<VaultSpace> getSpaceListByUserId(Long userId) {
 		List<VaultSpace> spaces = spaceRepo.findByVaultUserId(userId);
 		for (VaultSpace space : spaces) {
-			space.setVaultUser(null);
+			cleanVaultSpace(space);
 		}
 		return spaces;
 
@@ -480,6 +485,93 @@ public class StorageService implements StorageServiceInterface {
 		}
 		return null;
 
+	}
+
+	public Boolean isHimTheFileOwner(Long fileId, Long userId) {
+		return fileRepo.existsByIdAndUserId(fileId, userId);
+	}
+
+	public JSONObject holdRenameFolderRequest(Long userId, Long folderId, String newName) {
+		if (folderId == null || !folderRepo.existsById(folderId) || !isHimTheFileOwner(folderId, userId)) {
+			return null;
+		}
+		JSONObject vaultFileObj = new JSONObject();
+		VaultFolder vaultFolder = folderRepo.findById(folderId).get();
+		renameFolder(vaultFolder, newName);
+		if (vaultFolder != null) {
+			vaultFileObj = new JSONObject(vaultFolder);
+			return vaultFileObj;
+		}
+		return null;
+	}
+
+	private VaultFolder renameFolder(VaultFolder vaultFolder, String newName) {
+		String knownPath = "/" + vaultFolder.getVaultUser().getUsername() + "/" + vaultFolder.getSpace().getName();
+		String foldersPath = null;
+		if (vaultFolder.getParentFolder() != null) {
+			foldersPath = getFullPathById(vaultFolder.getParentFolder().getId());
+		}
+		if (foldersPath != null) {
+			knownPath += foldersPath;
+		}
+		knownPath += "/" + vaultFolder.getName();
+
+		try {
+			fileManagerServ.renameFolder(knownPath, newName);
+			vaultFolder.setName(newName);
+			folderRepo.save(vaultFolder);
+			cleanVaultFolder(vaultFolder);
+			return vaultFolder;
+		} catch (Exception e) {
+			return null;
+		}
+
+	}
+
+	public JSONObject holdRenameFileRequest(Long userId, Long fileId, String newName) {
+		if (fileId == null || !fileRepo.existsById(fileId) || !isHimTheFileOwner(fileId, userId)) {
+			return null;
+		}
+		JSONObject vaultFileObj = new JSONObject();
+		VaultFile vaultFile = fileRepo.findById(fileId).get();
+		renameFolder(vaultFile, newName);
+		if (vaultFile != null) {
+			vaultFileObj = new JSONObject(vaultFile);
+			return vaultFileObj;
+		}
+		return null;
+	}
+
+	public VaultFile renameFolder(VaultFile vaultFile, String newName) {
+		String knownPath = "/" + vaultFile.getVaultUser().getUsername() + "/" + vaultFile.getSpace().getName();
+		String foldersPath = null;
+		if (vaultFile.getParentFolder() != null) {
+			foldersPath = getFullPathById(vaultFile.getParentFolder().getId());
+		}
+		if (foldersPath != null) {
+			knownPath += foldersPath;
+		}
+		knownPath += "/" + vaultFile.getName();
+
+		try {
+			fileManagerServ.renameFile(knownPath, newName);
+			vaultFile.setName(newName);
+			fileRepo.save(vaultFile);
+			cleanVaultFile(vaultFile);
+			return vaultFile;
+		} catch (Exception e) {
+			return null;
+		}
+
+	}
+
+	public VaultFile cleanVaultFile(VaultFile vaultFile) {
+		vaultFile.setParentFolder(null);
+		vaultFile.setVaultUser(null);
+		vaultFile.setVaultUser(null);
+		vaultFile.setSection(null);
+		vaultFile.setSpace(null);
+		return vaultFile;
 	}
 	// TODO:delete file
 //	public String getFullPathById(Long folderId) {
