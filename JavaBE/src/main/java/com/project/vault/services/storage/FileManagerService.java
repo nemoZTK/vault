@@ -28,15 +28,15 @@ public class FileManagerService implements FileManagerInterface {
 			logger.error("null path");
 			return false;
 		}
-		knownPath = basePath + knownPath;
+
 		try {
-			Path folderPath = Paths.get(knownPath).normalize();
+			Path folderPath = Paths.get(basePath + knownPath).normalize();
 			logger.trace("Creating folder at: " + folderPath.toString());
 			if (Files.exists(folderPath)) {
 				logger.warn("Folder already exists at: " + folderPath.toString());
 				return true;
 			}
-			Files.createDirectories(folderPath);
+			Files.createDirectory(folderPath);
 			logger.info("Folder created successfully at: " + folderPath.toString());
 			return true;
 		} catch (IOException e) {
@@ -46,11 +46,29 @@ public class FileManagerService implements FileManagerInterface {
 
 	}
 
+	public Boolean renameFolder(String knownPath, String newFolderName) {
+		Path sourcePath = Paths.get(basePath + knownPath).normalize();
+		Path targetPath = sourcePath.resolveSibling(newFolderName).normalize();
+
+		try {
+			if (Files.exists(sourcePath) && Files.isDirectory(sourcePath)) {
+				Files.move(sourcePath, targetPath);
+				logger.info("Folder renamed successfully from: " + sourcePath + " to: " + targetPath);
+				return true;
+			} else {
+				logger.error("Folder does not exist or is not a directory at path: " + sourcePath);
+				return false;
+			}
+		} catch (IOException e) {
+			logger.error("Failed to rename folder from: " + sourcePath + " to: " + targetPath, e);
+			return false;
+		}
+	}
+
 	@Override
 	public Boolean saveFile(String knownPath, MultipartFile file) {
-		logger.info("file will be saved in " + knownPath);
-		knownPath = basePath + knownPath;
-		Path absolutePath = Paths.get(knownPath).normalize();
+		logger.info("file will be saved in " + basePath + knownPath);
+		Path absolutePath = Paths.get(basePath + knownPath).normalize();
 
 		logger.info("final path is " + absolutePath.toString());
 
@@ -66,11 +84,9 @@ public class FileManagerService implements FileManagerInterface {
 	@Override
 	public Resource getFile(String knownPath) {
 
-		String completePath = basePath + knownPath;
-		String m = "sss";
 		try {
 
-			URI fileUri = Paths.get(completePath).normalize().toUri();
+			URI fileUri = Paths.get(basePath + knownPath).normalize().toUri();
 			Resource resource = new UrlResource(fileUri);
 			if (resource.exists() && resource.isReadable()) {
 				return resource;
@@ -102,23 +118,28 @@ public class FileManagerService implements FileManagerInterface {
 		}
 	}
 
-	public Boolean renameFolder(String knownPath, String newFolderName) {
-		Path sourcePath = Paths.get(basePath + knownPath).normalize();
-		Path targetPath = sourcePath.resolveSibling(newFolderName).normalize();
+	public Boolean deleteFile(String knownPath) {
+		if (knownPath == null) {
+			logger.error("null path");
+			return false;
+		}
+
+		Path filePath = Paths.get(basePath + knownPath).normalize();
+
+		logger.trace("Deleting file at: " + filePath.toString());
 
 		try {
-			if (Files.exists(sourcePath) && Files.isDirectory(sourcePath)) {
-				Files.move(sourcePath, targetPath);
-				logger.info("Folder renamed successfully from: " + sourcePath + " to: " + targetPath);
+			if (Files.exists(filePath)) {
+				Files.delete(filePath);
+				logger.info("File deleted successfully at: " + filePath.toString());
 				return true;
 			} else {
-				logger.error("Folder does not exist or is not a directory at path: " + sourcePath);
+				logger.warn("File does not exist at path: " + filePath.toString());
 				return false;
 			}
 		} catch (IOException e) {
-			logger.error("Failed to rename folder from: " + sourcePath + " to: " + targetPath, e);
+			logger.error("Failed to delete file at: " + filePath.toString(), e);
 			return false;
 		}
 	}
-
 }
