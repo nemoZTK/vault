@@ -6,7 +6,9 @@
       </template>
       <template #default>
         <ul>
-          <li v-for="space in spaces" :key="space.id" @click="goToFoldersPage(space.id, space.name)">
+          <li v-for="space in spaces" :key="space.id" 
+              :data-space-name="space.name" 
+              @click="goToFoldersPage(space.id, space.name)">
             {{ space.name }}
           </li>
         </ul>

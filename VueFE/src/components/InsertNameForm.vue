@@ -43,6 +43,7 @@
   /* Aggiungi ulteriori stili se necessario */
 }
 
+
 .form-container h2 {
   margin: 0; /* Aggiusta il margine se necessario */
 }

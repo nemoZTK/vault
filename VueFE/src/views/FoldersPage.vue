@@ -3,8 +3,8 @@
     <BaseMainBlock actionType="folder" @add-new-folder="createNewFolder">
       <template #header>
         <div>
-          <h1>{{ whereWeAre }}</h1>
-          <h2 v-if="currentFolderName">{{ currentFolderName }}</h2>
+          <h1 id="space-name">{{ whereWeAre }}</h1>
+          <h2 id="actual-folder"v-if="currentFolderName">{{ currentFolderName }}</h2>
         </div>
         <div>
           <button class="grey-button" @click="goHome">Home</button>
@@ -19,20 +19,52 @@
         <ul>
           <li v-for="folder in folders" :key="'folder-' + folder.id" class="folder-item"
             @click="selectFolder(folder.id, folder.name)">
-            <button class="grey-button download-button" @click.stop="downloadItem(folder.id, 'folder')">Download</button>
+            <button 
+              class="grey-button download-button" 
+              :data-folder-name="folder.name" 
+              @click.stop="downloadItem(folder.id, 'folder')">
+              Download
+            </button>
             <span>📁 {{ folder.name }}</span>
-            <button class="grey-button rename-button" @click.stop="rename('folder', folder.id, folder.name)">Rename</button>
-            <button class="grey-button delete-button" @click.stop="deleteItem('folder', folder.id)">Delete</button>
+            <button 
+              class="grey-button rename-button" 
+              :data-folder-name="folder.name" 
+              @click.stop="rename('folder', folder.id, folder.name)">
+              Rename
+            </button>
+            <button 
+              class="grey-button delete-button" 
+              :data-folder-name="folder.name" 
+              @click.stop="deleteItem('folder', folder.id)">
+              Delete
+            </button>
           </li>
           <li v-for="file in files" :key="'file-' + file.id" class="file-item" @click="selectFile(file.id)">
             <span>📄 {{ file.name }} ({{ formatFileSize(file.size) }})</span>
-            <button class="grey-button download-button" @click.stop="downloadItem(file.id, 'file')">Download</button>
-            <button class="grey-button rename-button" @click.stop="rename('file', file.id, file.name)">Rename</button>
-            <button class="grey-button delete-button" @click.stop="deleteItem('file', file.id)">Delete</button>
+            <button 
+              class="grey-button download-button" 
+              :data-file-name="file.name" 
+              @click.stop="downloadItem(file.id, 'file')">
+              Download
+            </button>
+            <button 
+              class="grey-button rename-button" 
+              :data-file-name="file.name" 
+              @click.stop="rename('file', file.id, file.name)">
+              Rename
+            </button>
+            <button 
+              class="grey-button delete-button" 
+              :data-file-name="file.name" 
+              @click.stop="deleteItem('file', file.id)">
+              Delete
+            </button>
           </li>
         </ul>
       </template>
     </BaseMainBlock>
+  </div>
+</template>
 
     <InputForm v-if="isInputFormVisible" @submit="handleRename" @close="isInputFormVisible = false" />
 
