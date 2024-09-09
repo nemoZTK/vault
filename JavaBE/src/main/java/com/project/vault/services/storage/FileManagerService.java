@@ -18,9 +18,13 @@ import org.springframework.web.multipart.MultipartFile;
 public class FileManagerService implements FileManagerInterface {
 
 	private final Logger logger = LoggerFactory.getLogger(getClass());
+//---------------------------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------------------------
 
 	@Value("${folder.main.path}")
 	private String basePath;
+
+	// ---------------------------------------------------------------------------------------------------------------
 
 	@Override
 	public Boolean createFolder(String knownPath) {
@@ -46,6 +50,8 @@ public class FileManagerService implements FileManagerInterface {
 
 	}
 
+	// ---------------------------------------------------------------------------------------------------------------
+	@Override
 	public Boolean renameFolder(String knownPath, String newFolderName) {
 		Path sourcePath = Paths.get(basePath + knownPath).normalize();
 		Path targetPath = sourcePath.resolveSibling(newFolderName).normalize();
@@ -65,6 +71,8 @@ public class FileManagerService implements FileManagerInterface {
 		}
 	}
 
+	// ---------------------------------------------------------------------------------------------------------------
+
 	@Override
 	public Boolean saveFile(String knownPath, MultipartFile file) {
 		logger.info("file will be saved in " + basePath + knownPath);
@@ -80,6 +88,8 @@ public class FileManagerService implements FileManagerInterface {
 		}
 		return true;
 	}
+
+	// ---------------------------------------------------------------------------------------------------------------
 
 	@Override
 	public Resource getFile(String knownPath) {
@@ -97,8 +107,10 @@ public class FileManagerService implements FileManagerInterface {
 		return null;
 	}
 
-	public Boolean renameFile(String knownOldPath, String newFileName) {
-		Path sourcePath = Paths.get(basePath + knownOldPath).normalize();
+	// ---------------------------------------------------------------------------------------------------------------
+	@Override
+	public Boolean renameFile(String knowPath, String newFileName) {
+		Path sourcePath = Paths.get(basePath + knowPath).normalize();
 
 		Path targetPath = sourcePath.resolveSibling(newFileName).normalize();
 		String g;
@@ -118,6 +130,9 @@ public class FileManagerService implements FileManagerInterface {
 		}
 	}
 
+	// ---------------------------------------------------------------------------------------------------------------
+
+	@Override
 	public Boolean deleteFolder(String knownPath) {
 		Path folderPath = Paths.get(basePath + knownPath).normalize();
 		try {
@@ -141,6 +156,8 @@ public class FileManagerService implements FileManagerInterface {
 		}
 	}
 
+	// ---------------------------------------------------------------------------------------------------------------
+	@Override
 	public Boolean deleteFile(String knownPath) {
 		Path path = Paths.get(basePath + knownPath).normalize();
 		try {

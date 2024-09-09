@@ -38,6 +38,7 @@ public class StorageController {
 	private VaultUserAuthenticationService authServ;
 
 	// --------------------------------------------------------------------------------------------------------------------------------------------------
+	// --------------------------------------------------------------------------------------------------------------------------------------------------
 
 	@PostMapping("/upload")
 	public ResponseEntity<?> upload(@RequestParam(name = "userId", required = true) Long userId,
@@ -58,6 +59,7 @@ public class StorageController {
 			return ResponseEntity.badRequest().body(response.put("result", "permission denied").toString());
 		}
 	}
+	// --------------------------------------------------------------------------------------------------------------------------------------------------
 
 	@PostMapping("/download")
 	public ResponseEntity<?> download(@RequestParam(name = "userId", required = true) Long userId,
@@ -81,6 +83,7 @@ public class StorageController {
 		return null;
 
 	}
+	// --------------------------------------------------------------------------------------------------------------------------------------------------
 
 	@GetMapping("/image")
 	public ResponseEntity<?> getImage(@RequestParam(name = "userId", required = true) Long userId,
@@ -117,16 +120,7 @@ public class StorageController {
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Resource not found");
 	}
 
-	private MediaType determineMediaType(String filename) {
-		if (filename.endsWith(".jpg") || filename.endsWith(".jpeg")) {
-			return MediaType.IMAGE_JPEG;
-		} else if (filename.endsWith(".png")) {
-			return MediaType.IMAGE_PNG;
-		} else if (filename.endsWith(".gif")) {
-			return MediaType.IMAGE_GIF;
-		}
-		return MediaType.APPLICATION_OCTET_STREAM; // Default
-	}
+	// --------------------------------------------------------------------------------------------------------------------------------------------------
 
 	@DeleteMapping("/delete/file")
 	public ResponseEntity<?> deleteFile(@RequestParam List<Long> fileIds, @RequestParam Long userId,
@@ -153,5 +147,17 @@ public class StorageController {
 	}
 
 	// --------------------------------------------------------------------------------------------------------------------------------------------------
+	// --------------------------------------------------------------------------------------------------------------------------------------------------
+
+	private MediaType determineMediaType(String filename) {
+		if (filename.endsWith(".jpg") || filename.endsWith(".jpeg")) {
+			return MediaType.IMAGE_JPEG;
+		} else if (filename.endsWith(".png")) {
+			return MediaType.IMAGE_PNG;
+		} else if (filename.endsWith(".gif")) {
+			return MediaType.IMAGE_GIF;
+		}
+		return MediaType.APPLICATION_OCTET_STREAM; // Default
+	}
 
 }

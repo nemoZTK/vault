@@ -31,6 +31,8 @@ public class SpaceController {
 	private VaultUserAuthenticationService authServ;
 	@Autowired
 	StorageService storageServ;
+	// --------------------------------------------------------------------------------------------------------------------------------------------------
+	// --------------------------------------------------------------------------------------------------------------------------------------------------
 
 	@PostMapping("/newspace")
 	ResponseEntity<?> createNewSpace(@RequestBody NewSpaceRequest bodyReq, HttpServletRequest req) {
@@ -43,6 +45,7 @@ public class SpaceController {
 		return ResponseEntity.badRequest().body(response.put("result", "permission denied").toString());
 
 	}
+	// --------------------------------------------------------------------------------------------------------------------------------------------------
 
 	@GetMapping("/spaces/all/{userId}")
 	public ResponseEntity<?> getAllSpacesByUserId(@PathVariable(name = "userId", required = true) Long userId,
@@ -60,6 +63,7 @@ public class SpaceController {
 		}
 		return ResponseEntity.badRequest().body(response.put("result", "permission denied").toString());
 	}
+	// --------------------------------------------------------------------------------------------------------------------------------------------------
 
 	@GetMapping("/spaces")
 	public ResponseEntity<?> getSpacesContentById(@RequestParam(name = "userId", required = true) Long userId,
@@ -74,6 +78,9 @@ public class SpaceController {
 		}
 		return ResponseEntity.badRequest().body(response.put("result", "permission denied").toString());
 	}
+
+	// --------------------------------------------------------------------------------------------------------------------------------------------------
+	// --------------------------------------------------------------------------------------------------------------------------------------------------
 
 	record NewSpaceRequest(Long userId, String spaceName) {
 	}

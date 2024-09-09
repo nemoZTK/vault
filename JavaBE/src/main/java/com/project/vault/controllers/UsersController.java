@@ -1,15 +1,11 @@
 package com.project.vault.controllers;
 
-import java.util.List;
-
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,9 +20,13 @@ import jakarta.servlet.http.HttpServletRequest;
 @RestController
 @RequestMapping("/api/users")
 public class UsersController {
+
 	private final Logger logger = LoggerFactory.getLogger(getClass());
+
 	@Autowired
 	private VaultUserAuthenticationService authServ;
+	// --------------------------------------------------------------------------------------------------------------------------------------------------
+	// --------------------------------------------------------------------------------------------------------------------------------------------------
 
 	@PostMapping("/create")
 	ResponseEntity<?> create(@RequestBody VaultUser user) {
@@ -44,9 +44,7 @@ public class UsersController {
 		}
 	}
 
-	public record newLoginRequest(String username, String password) {
-
-	}
+	// --------------------------------------------------------------------------------------------------------------------------------------------------
 
 	@PostMapping("/login")
 	public ResponseEntity<?> login(@RequestBody newLoginRequest req) {
@@ -58,6 +56,7 @@ public class UsersController {
 		}
 		return ResponseEntity.badRequest().body("wrong username or password");
 	}
+	// --------------------------------------------------------------------------------------------------------------------------------------------------
 
 	@PostMapping("/logout")
 	public ResponseEntity<?> logout(HttpServletRequest request) {
@@ -68,22 +67,26 @@ public class UsersController {
 			return ResponseEntity.badRequest().body("No token provided");
 		}
 	}
+	// --------------------------------------------------------------------------------------------------------------------------------------------------
+	// --------------------------------------------------------------------------------------------------------------------------------------------------
 
-	@GetMapping("/all")
-	List<VaultUser> getAllUsers() {
-		List<VaultUser> allUsers = authServ.getAllUsers();
-		System.out.println("finded {" + allUsers.toArray().toString() + "}");
-		return allUsers;
+	public record newLoginRequest(String username, String password) {
 	}
 
-	@GetMapping("/id")
-	String hello(HttpServletRequest req) {
-		return "session id=" + req.getSession().getId();
-	}
-
-	@GetMapping("/csrf-token")
-	public CsrfToken getCsrfToken(HttpServletRequest req) {
-		return (CsrfToken) req.getAttribute("_csrf");
-	}
-
+//	@GetMapping("/all")
+//	List<VaultUser> getAllUsers() {
+//		List<VaultUser> allUsers = authServ.getAllUsers();
+//		System.out.println("finded {" + allUsers.toArray().toString() + "}");
+//		return allUsers;
+//	}
+//
+//	@GetMapping("/id")
+//	String hello(HttpServletRequest req) {
+//		return "session id=" + req.getSession().getId();
+//	}
+//
+//	@GetMapping("/csrf-token")
+//	public CsrfToken getCsrfToken(HttpServletRequest req) {
+//		return (CsrfToken) req.getAttribute("_csrf");
+//	}
 }

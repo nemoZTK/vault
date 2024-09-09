@@ -20,6 +20,7 @@ import com.project.vault.services.VaultUserAuthenticationService;
 @Service
 public class FileService implements FileServiceInterface {
 
+	// ------------------------------------------------------------------------------------------------------------
 	@Autowired
 	FileRepository fileRepo;
 	@Autowired
@@ -33,6 +34,8 @@ public class FileService implements FileServiceInterface {
 
 	private final Logger logger = LoggerFactory.getLogger(getClass());
 
+	// ------------------------------------------------------------------------------------------------------------
+
 	public List<VaultFile> getCleanFileByParentFolderId(Long folderId) {
 		List<VaultFile> files = getFileByParentFolderId(folderId);
 		if (files != null) {
@@ -44,9 +47,13 @@ public class FileService implements FileServiceInterface {
 		return null;
 	}
 
+	// ------------------------------------------------------------------------------------------------------------
+
 	public String buildKnownFilePath(VaultFile file) {
 		return "/" + file.getVaultUser().getUsername() + file.getVaultUser().getId() + "/" + file.getSpace().getName();
 	}
+
+	// ------------------------------------------------------------------------------------------------------------
 
 	public List<VaultFile> getFileByParentFolderId(Long folderId) {
 		if (folderServ.existsById(folderId)) {
@@ -56,6 +63,8 @@ public class FileService implements FileServiceInterface {
 		return null;
 	}
 
+	// ------------------------------------------------------------------------------------------------------------
+
 	public VaultFile getFileById(Long id) {
 		if (id != null && fileRepo.existsById(id)) {
 			return fileRepo.findById(id).get();
@@ -64,6 +73,8 @@ public class FileService implements FileServiceInterface {
 		return null;
 
 	}
+
+	// ------------------------------------------------------------------------------------------------------------
 
 	public List<VaultFile> getCleanFileWithNullParentBySpaceId(Long spaceId) {
 		if (spaceServ.existsById(spaceId)) {
@@ -75,6 +86,8 @@ public class FileService implements FileServiceInterface {
 		}
 		return null;
 	}
+
+	// ------------------------------------------------------------------------------------------------------------
 
 	Resource holdSingleDownloadRequest(Long userId, Long spaceId, Long fileId) {
 		VaultFile fileInfo;
@@ -103,9 +116,13 @@ public class FileService implements FileServiceInterface {
 
 	}
 
+	// ------------------------------------------------------------------------------------------------------------
+
 	public Boolean isHimTheFileOwner(Long fileId, Long userId) {
 		return fileRepo.existsByIdAndUserId(fileId, userId);
 	}
+
+	// ------------------------------------------------------------------------------------------------------------
 
 	public JSONObject holdRenameFileRequest(Long userId, Long fileId, String newName) {
 		if (fileId == null || !fileRepo.existsById(fileId) || !isHimTheFileOwner(fileId, userId)) {
@@ -120,6 +137,8 @@ public class FileService implements FileServiceInterface {
 		}
 		return null;
 	}
+
+	// ------------------------------------------------------------------------------------------------------------
 
 	public VaultFile renameFile(VaultFile vaultFile, String newName) {
 
@@ -145,6 +164,8 @@ public class FileService implements FileServiceInterface {
 
 	}
 
+	// ------------------------------------------------------------------------------------------------------------
+
 	public VaultFile cleanVaultFile(VaultFile vaultFile) {
 		vaultFile.setParentFolder(null);
 		vaultFile.setVaultUser(null);
@@ -153,6 +174,8 @@ public class FileService implements FileServiceInterface {
 		vaultFile.setSpace(null);
 		return vaultFile;
 	}
+
+	// ------------------------------------------------------------------------------------------------------------
 
 	public JSONObject handleSingleFileUpload(MultipartFile file, Long userId, Long spaceId, Long parentId) {
 		JSONObject response = new JSONObject();
@@ -172,6 +195,8 @@ public class FileService implements FileServiceInterface {
 		return response.put("result", "error during local db saving");
 
 	}
+
+	// ------------------------------------------------------------------------------------------------------------
 
 	public VaultFile saveNewFile(MultipartFile file, Long userId, Long spaceId, Long parentId) {
 

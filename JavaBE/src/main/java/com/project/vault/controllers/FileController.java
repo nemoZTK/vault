@@ -22,6 +22,8 @@ public class FileController {
 
 	@Autowired
 	FileService fileServ;
+	// --------------------------------------------------------------------------------------------------------------------------------------------------
+	// --------------------------------------------------------------------------------------------------------------------------------------------------
 
 	@PutMapping("/rename/file")
 	public ResponseEntity<?> renameFile(@RequestBody RenameFileRequest renameFile, HttpServletRequest req) {
@@ -35,6 +37,9 @@ public class FileController {
 		}
 		return ResponseEntity.badRequest().body(response.put("result", "permission denied").toString());
 	}
+
+	// --------------------------------------------------------------------------------------------------------------------------------------------------
+	// --------------------------------------------------------------------------------------------------------------------------------------------------
 
 	record RenameFileRequest(Long userId, String newName, Long fileId) {
 

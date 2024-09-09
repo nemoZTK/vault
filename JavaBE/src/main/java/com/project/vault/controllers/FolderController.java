@@ -28,6 +28,9 @@ public class FolderController {
 	@Autowired
 	FolderService folderServ;
 
+	// --------------------------------------------------------------------------------------------------------------------------------------------------
+	// --------------------------------------------------------------------------------------------------------------------------------------------------
+
 	@PostMapping("/newfolder")
 	public ResponseEntity<?> newFolder(@RequestBody NewFolderRequest bodyReq, HttpServletRequest req) {
 		Long userId = bodyReq.userId();
@@ -39,6 +42,7 @@ public class FolderController {
 		}
 		return ResponseEntity.badRequest().body(response.put("result", "permission denied").toString());
 	}
+	// --------------------------------------------------------------------------------------------------------------------------------------------------
 
 	@GetMapping("/folder")
 	public ResponseEntity<?> getFoldersContentById(@RequestParam(name = "userId", required = true) Long userId,
@@ -54,6 +58,8 @@ public class FolderController {
 		return ResponseEntity.badRequest().body(response.put("result", "permission denied").toString());
 	}
 
+	// --------------------------------------------------------------------------------------------------------------------------------------------------
+
 	@PutMapping("/rename/folder")
 	public ResponseEntity<?> renameFolder(@RequestBody RenameFolderRequest folderReq, HttpServletRequest req) {
 		JSONObject response = new JSONObject();
@@ -66,6 +72,9 @@ public class FolderController {
 		}
 		return ResponseEntity.badRequest().body(response.put("result", "permission denied").toString());
 	}
+
+	// --------------------------------------------------------------------------------------------------------------------------------------------------
+	// --------------------------------------------------------------------------------------------------------------------------------------------------
 
 	record RenameFolderRequest(Long userId, String newName, Long folderId) {
 
