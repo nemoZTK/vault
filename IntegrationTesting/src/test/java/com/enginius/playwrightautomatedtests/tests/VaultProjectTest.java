@@ -42,7 +42,10 @@ public class VaultProjectTest {
 
 	@Value("${vault.testPassword}")
 	String password;
-
+	@Value("${vault.spaceName}")
+	String spaceName;
+	@Value("${vault.folderName}")
+	String folderName;
 	@Value("${vault.baselink}")
 	String baseLink;
 
@@ -112,17 +115,79 @@ public class VaultProjectTest {
 	// -----------------------------------------------------------------------------------
 
 	@Test
-	public void doLoginAndCheckFormsThenLogout() {
+	public void doLoginAndCheckThenLogout() {
 		try {
-			logger.info("eccoci qui");
-			page.navigate(baseLink);
-			isTestPassed = vaultServ.doLogin(username, password, page);
+			logger.info("TEST < doLoginAndCheckThenLogout > STARTED");
+			isTestPassed = vaultServ.doLogin(username, password, page, baseLink);
+			isTestPassed = (vaultServ.isAlreadyLogged(username, page)) ? vaultServ.doLogout(page, username) : false;
+			beautyCService.printResult(isTestPassed, "DO LOGIN AND CHECK FORMS");
+
+		} catch (Exception e) {
+			isTestPassed = false;
+			beautyCService.printResult(isTestPassed, "DO LOGIN AND CHECK FORMS");
+			e.printStackTrace();
+		}
+		logger.info("TEST > doLoginAndCheckThenLogout < ENDED");
+	}
+
+	@Test
+	public void doLoginAndCreateAnewSpace() {
+		try {
+			logger.info("TEST < doLoginAndCreateAnewSpace > STARTED");
+			isTestPassed = vaultServ.doLogin(username, password, page, baseLink);
+			String spaceName = "T-" + vaultServ.generateRandomString(5);
+			isTestPassed = (vaultServ.isAlreadyLogged(username, page)) ? vaultServ.doNewSpace(spaceName, page) : false;
+			isTestPassed = vaultServ.enterInSpace(spaceName, page);
+			beautyCService.printResult(isTestPassed, "DO LOGIN AND CHECK FORMS");
+
+		} catch (Exception e) {
+			isTestPassed = false;
+			beautyCService.printResult(isTestPassed, "DO LOGIN AND CHECK FORMS");
+			e.printStackTrace();
+		}
+		logger.info("TEST > doLoginAndCreateAnewSpace < ENDED");
+	}
+
+	@Test
+	public void doLoginEnterSpaceAndCreateNewFolder() {
+		try {
+			logger.info("TEST < doLoginAndCreateAnewSpace > STARTED");
+
+			isTestPassed = vaultServ.doLogin(username, password, page, baseLink);
+			String folderName = "T-" + vaultServ.generateRandomString(5);
+			isTestPassed = (vaultServ.isAlreadyLogged(username, page)) ? vaultServ.enterInSpace(spaceName, page)
+					: false;
+			isTestPassed = (vaultServ.doNewFolder(folderName, page)) ? vaultServ.doEnterInFolder(folderName, page)
+					: false;
 			beautyCService.printResult(isTestPassed, "DO LOGIN AND CHECK FORMS");
 		} catch (Exception e) {
 			isTestPassed = false;
 			beautyCService.printResult(isTestPassed, "DO LOGIN AND CHECK FORMS");
 			e.printStackTrace();
 		}
+		logger.info("TEST > doLoginAndCreateAnewSpace < ENDED");
+	}
+
+	@Test
+	public void doLoginEnterSpaceAndRenameFolder() {
+		try {
+			logger.info("TEST < doLoginEnterSpaceAndRenameFolder > STARTED");
+
+			isTestPassed = vaultServ.doLogin(username, password, page, baseLink);
+			isTestPassed = (vaultServ.isAlreadyLogged(username, page)) ? vaultServ.enterInSpace(spaceName, page)
+					: false;
+			isTestPassed = (vaultServ.doEnterInFolder(folderName, page))
+					? vaultServ.doRenameFolder(folderName, folderName, page)
+					: false;
+			beautyCService.printResult(isTestPassed, "DO LOGIN AND CHECK FORMS");
+		} catch (Exception e) {
+			isTestPassed = false;
+			beautyCService.printResult(isTestPassed, "DO LOGIN AND CHECK FORMS");
+			e.printStackTrace();
+		}
+
+		logger.info("TEST > doLoginEnterSpaceAndRenameFolder < ENDED");
+
 	}
 
 }
