@@ -20,7 +20,7 @@ public interface VaultServiceInterface {
 
 	Boolean doDeleteFolder(String folderName, Page page);
 
-	Boolean doRenameFolder(String folderName, String newName, Page page);
+	Boolean doRenameFolderSafe(String folderName, String newName, Page page);
 
 	Boolean doRenamePhoto(String photoName, String newName, Page page);
 

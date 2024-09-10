@@ -44,11 +44,11 @@ public class VaultService implements VaultServiceInterface {
 			page.navigate(url);
 			isDone = checkComponent.checkNavbar(page);
 			page.locator("button:has-text('Login')").click();
-			page.getByPlaceholder("Username").click();
-			page.getByPlaceholder("Username").fill(username);
-			page.getByPlaceholder("Username").press("Tab");
-			page.getByPlaceholder("Password").fill(password);
-			page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Confirm")).click();
+			page.locator("input[type='text']").click();
+			page.locator("input[type='text']").fill(username);
+			page.locator("input[type='text']").press("Tab");
+			page.locator("input[type='password']").fill(password);
+			page.locator("button:has-text('Confirm')").click();
 			page.waitForTimeout(4000);
 			isDone = true;
 		} catch (Exception e) {
@@ -201,7 +201,15 @@ public class VaultService implements VaultServiceInterface {
 	@Override
 	public Boolean doDeleteFolder(String folderName, Page page) {
 		try {
-
+			page.locator("li.folder-item:has-text('" + folderName + "')").hover();
+			page.locator("button.delete-button[data-folder-name='" + folderName + "']").click();
+			page.locator("text='Confirm Delete'").click();
+			page.waitForTimeout(1000);
+			if (page.locator("li.folder-item:has-text('" + folderName + "')").isVisible()) {
+				logger.info(folderName + " IS STILL HERE!");
+				return false;
+			}
+			logger.info(folderName + " DELETED");
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -211,24 +219,24 @@ public class VaultService implements VaultServiceInterface {
 	}
 
 	@Override
-	public Boolean doRenameFolder(String folderName, String newName, Page page) {
+	public Boolean doRenameFolderSafe(String folderName, String newName, Page page) {
 		try {
-
-			page.locator("li[data-folder-name='" + folderName + "'] .rename-button").click();
-			page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Rename")).click();
+			page.locator("li.folder-item:has-text('" + folderName + "')").hover();
+			page.locator("button.rename-button[data-folder-name='" + folderName + "']").click();
 			page.getByPlaceholder("Name...").click();
 			page.getByPlaceholder("Name...").fill(newName);
 			page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Confirm")).click();
-			page.locator("[data-folder-name='" + newName + "']").isVisible();
+			page.locator("li.folder-item:has-text('" + newName + "')").isVisible();
+			page.locator("li.folder-item:has-text('" + newName + "')").hover();
 			logger.info("FOLDER --" + folderName + "-- RENAMED IN --" + newName);
-			page.locator("li[data-folder-name='" + newName + "'] .rename-button").click();
-			page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Rename")).click();
+			page.locator("button.rename-button[data-folder-name='" + newName + "']").click();
 			page.getByPlaceholder("Name...").click();
 			page.getByPlaceholder("Name...").fill(folderName);
 			page.getByRole(AriaRole.BUTTON, new Page.GetByRoleOptions().setName("Confirm")).click();
 			logger.info("FOLDER --" + newName + "-- RENAMED IN --" + folderName);
-			return page.locator("[data-folder-name='" + folderName + "']").isVisible();
-
+			page.locator("li.folder-item:has-text('" + folderName + "')").isVisible();
+			logger.info("folder name trovata");
+			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;

@@ -120,11 +120,11 @@ public class VaultProjectTest {
 			logger.info("TEST < doLoginAndCheckThenLogout > STARTED");
 			isTestPassed = vaultServ.doLogin(username, password, page, baseLink);
 			isTestPassed = (vaultServ.isAlreadyLogged(username, page)) ? vaultServ.doLogout(page, username) : false;
-			beautyCService.printResult(isTestPassed, "DO LOGIN AND CHECK FORMS");
+			beautyCService.printResult(isTestPassed, "DO LOGIN AND LOGOUT");
 
 		} catch (Exception e) {
 			isTestPassed = false;
-			beautyCService.printResult(isTestPassed, "DO LOGIN AND CHECK FORMS");
+			beautyCService.printResult(isTestPassed, "DO LOGIN AND LOGOUT");
 			e.printStackTrace();
 		}
 		logger.info("TEST > doLoginAndCheckThenLogout < ENDED");
@@ -138,11 +138,11 @@ public class VaultProjectTest {
 			String spaceName = "T-" + vaultServ.generateRandomString(5);
 			isTestPassed = (vaultServ.isAlreadyLogged(username, page)) ? vaultServ.doNewSpace(spaceName, page) : false;
 			isTestPassed = vaultServ.enterInSpace(spaceName, page);
-			beautyCService.printResult(isTestPassed, "DO LOGIN AND CHECK FORMS");
+			beautyCService.printResult(isTestPassed, "DO LOGIN AND CREATE NEW SPACE");
 
 		} catch (Exception e) {
 			isTestPassed = false;
-			beautyCService.printResult(isTestPassed, "DO LOGIN AND CHECK FORMS");
+			beautyCService.printResult(isTestPassed, "DO LOGIN AND CREATE NEW SPACE");
 			e.printStackTrace();
 		}
 		logger.info("TEST > doLoginAndCreateAnewSpace < ENDED");
@@ -151,7 +151,7 @@ public class VaultProjectTest {
 	@Test
 	public void doLoginEnterSpaceAndCreateNewFolder() {
 		try {
-			logger.info("TEST < doLoginAndCreateAnewSpace > STARTED");
+			logger.info("TEST < doLoginEnterSpaceAndCreateNewFolder > STARTED");
 
 			isTestPassed = vaultServ.doLogin(username, password, page, baseLink);
 			String folderName = "T-" + vaultServ.generateRandomString(5);
@@ -159,13 +159,13 @@ public class VaultProjectTest {
 					: false;
 			isTestPassed = (vaultServ.doNewFolder(folderName, page)) ? vaultServ.doEnterInFolder(folderName, page)
 					: false;
-			beautyCService.printResult(isTestPassed, "DO LOGIN AND CHECK FORMS");
+			beautyCService.printResult(isTestPassed, "DO LOGIN AND ENTER SPACE THEN CREATE NEW FOLDER");
 		} catch (Exception e) {
 			isTestPassed = false;
-			beautyCService.printResult(isTestPassed, "DO LOGIN AND CHECK FORMS");
+			beautyCService.printResult(isTestPassed, "DO LOGIN AND ENTER SPACE THEN CREATE NEW FOLDER");
 			e.printStackTrace();
 		}
-		logger.info("TEST > doLoginAndCreateAnewSpace < ENDED");
+		logger.info("TEST > ddoLoginEnterSpaceAndCreateNewFolder < ENDED");
 	}
 
 	@Test
@@ -177,17 +177,40 @@ public class VaultProjectTest {
 			isTestPassed = (vaultServ.isAlreadyLogged(username, page)) ? vaultServ.enterInSpace(spaceName, page)
 					: false;
 			isTestPassed = (vaultServ.doEnterInFolder(folderName, page))
-					? vaultServ.doRenameFolder(folderName, folderName, page)
+					? vaultServ.doRenameFolderSafe(folderName, "TESTrename", page)
 					: false;
-			beautyCService.printResult(isTestPassed, "DO LOGIN AND CHECK FORMS");
+			beautyCService.printResult(isTestPassed,
+					"DO LOGIN AND ENTER SPACE THEN ENTER IN FOLDER AND RENAME A FOLDER");
 		} catch (Exception e) {
 			isTestPassed = false;
-			beautyCService.printResult(isTestPassed, "DO LOGIN AND CHECK FORMS");
+			beautyCService.printResult(isTestPassed,
+					"DO LOGIN AND ENTER SPACE THEN ENTER IN FOLDER AND RENAME A FOLDER");
 			e.printStackTrace();
 		}
 
 		logger.info("TEST > doLoginEnterSpaceAndRenameFolder < ENDED");
 
+	}
+
+	@Test
+	public void doLoginEnterSpaceCreateAndRemoveFolder() {
+		try {
+			logger.info("TEST < doLoginEnterSpaceCreateAndRemoveFolder > STARTED");
+
+			isTestPassed = vaultServ.doLogin(username, password, page, baseLink);
+			String folderName = "T-" + vaultServ.generateRandomString(5);
+			isTestPassed = (vaultServ.isAlreadyLogged(username, page)) ? vaultServ.enterInSpace(spaceName, page)
+					: false;
+			isTestPassed = (vaultServ.doNewFolder(folderName, page)) ? vaultServ.doDeleteFolder(folderName, page)
+					: false;
+			beautyCService.printResult(isTestPassed, "DO LOGIN AND ENTER SPACE THEN REMOVE FOLDER");
+		} catch (Exception e) {
+			isTestPassed = false;
+			beautyCService.printResult(isTestPassed, "DO LOGIN AND ENTER SPACE THEN REMOVE FOLDER");
+			e.printStackTrace();
+		}
+
+		logger.info("TEST > doLoginEnterSpaceCreateAndRemoveFolder < ENDED");
 	}
 
 }
