@@ -13,7 +13,8 @@ export default {
                 responseType: 'blob'
             });
 
-            this.selectedFileUrl = URL.createObjectURL(response.data);
+            const url = URL.createObjectURL(response.data);
+            this.selectedFileUrl = url;
             this.isModalOpen = true;
         } catch (error) {
             console.error('Errore nel recupero dell\'immagine:', error);

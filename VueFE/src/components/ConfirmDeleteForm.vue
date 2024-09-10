@@ -1,5 +1,5 @@
 <template>
-    <BaseForm title="Confirm Deletion" submitButtonText="Delete" @submit="submit" @close="closeForm">
+    <BaseForm title="Confirm Deletion" submitButtonText="Confirm Delete" @submit="submit" @close="closeForm">
       <template v-slot:form-fields>
         <p class="alert">Are you sure you want to delete {{ itemName }}?</p>
       </template>

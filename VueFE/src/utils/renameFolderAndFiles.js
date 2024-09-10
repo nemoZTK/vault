@@ -39,7 +39,6 @@ export async function renameFolder(userId, folderId, newName) {
     try {
         console.log("sto per mandare user " + userId + " con nuovo nome: " + newName + " e folderId: " + folderId);
 
-        const newNameLowerCase = newName.toLowerCase();
 
         // Convertiamo userId e folderId in numeri
         const response = await protectedApiClient.put(
@@ -47,7 +46,7 @@ export async function renameFolder(userId, folderId, newName) {
             {
                 userId: Number(userId),
                 folderId: Number(folderId),
-                newName: newNameLowerCase
+                newName: newName
             }
         );
         return response.status === 200;

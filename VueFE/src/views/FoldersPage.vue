@@ -4,7 +4,7 @@
       <template #header>
         <div>
           <h1 id="space-name">{{ whereWeAre }}</h1>
-          <h2 id="actual-folder"v-if="currentFolderName">{{ currentFolderName }}</h2>
+          <h2 id="actual-folder" v-if="currentFolderName">{{ currentFolderName }}</h2>
         </div>
         <div>
           <button class="grey-button" @click="goHome">Home</button>
@@ -63,17 +63,17 @@
         </ul>
       </template>
     </BaseMainBlock>
-  </div>
-</template>
-
+    
     <InputForm v-if="isInputFormVisible" @submit="handleRename" @close="isInputFormVisible = false" />
 
-    <div v-if="isModalOpen" class="modal" @click.self="closeModal">
-      <div class="modal-content">
-        <span class="close" @click="closeModal">&times;</span>
-        <img :src="selectedFileUrl" alt="Immagine selezionata" style="max-width: 70%; height: auto;" />
-      </div>
+  <div v-if="isModalOpen" class="modal" @click.self="closeModal">
+    <div class="modal-content">
+      <span class="close" @click="closeModal">&times;</span>
+      <embed :src="selectedFileUrl" style="width: 100%; height: 500px;" />
     </div>
+  </div>
+
+    
     <ConfirmForm
       v-if="isConfirmFormVisible"
       :title="'Confirm Delete'"
@@ -83,6 +83,7 @@
     />
   </div>
 </template>
+
 
 <script>
 import BaseMainBlock from '@/components/BaseMainBlock.vue';
