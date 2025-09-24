@@ -5,6 +5,7 @@ vault project
 benvenuti nel progetto vault.
 
 IN BREVE
+questo era il progetto finale che ho scelto per il corso
 
 l'idea è quella di un sito che permetta agli utenti di ospitare documenti e progetti
 
