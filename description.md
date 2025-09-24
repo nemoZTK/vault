@@ -9,6 +9,8 @@ IN BREVE
 
 questo era il progetto finale che ho scelto per il corso
 
+la descrizione seguente era l'idea iniziale, per motivi di tempistiche ho scelto di accantonare l'idea di repo in favore di un cloud storage con cartelle e sottocartelle pensato per ospitare foto
+
 l'idea è quella di un sito che permetta agli utenti di ospitare documenti e progetti
 
 1) tramite sito l'utente potrà creare un argomento(repo) 
