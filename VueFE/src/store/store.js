@@ -1,14 +1,11 @@
-import Vue from 'vue';
-import Vuex from 'vuex';
+import { createStore } from 'vuex';
 
-Vue.use(Vuex);
-
-export default new Vuex.Store({
+export default createStore({
   state: {
     isLoggedIn: false,
     username: '',
     id: 0,
-    token: '' // Aggiungi il token al tuo stato
+    token: ''
   },
   mutations: {
     login(state, { username, id, token }) {
@@ -35,7 +32,7 @@ export default new Vuex.Store({
       state.username = username;
       state.id = id;
       state.token = token;
-      state.isLoggedIn = true; 
+      state.isLoggedIn = true;
       localStorage.setItem('authToken', token);
       localStorage.setItem('username', username);
       localStorage.setItem('id', id);

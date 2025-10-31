@@ -1,17 +1,16 @@
-import Vue from 'vue';
-import App from './App.vue';
-import router from './router';
-import store from './store/store';
-import './styles/variables.css';
-import './styles/scrollbar.css'; 
-import './styles/dropdown.css';
-Vue.config.productionTip = true;
+import { createApp } from 'vue'
+import App from './App.vue'
+import router from './router'
+import store from './store/store'
+import './styles/variables.css'
+import './styles/scrollbar.css'
+import './styles/dropdown.css'
 
-new Vue({
-  store,
-  router,
-  render: h => h(App),
-  created() {
-    this.$store.dispatch('initializeStore');
-  }
-}).$mount('#app');
+const app = createApp(App)
+
+app.use(store)
+app.use(router)
+
+app.config.productionTip = true
+
+app.mount('#app')
