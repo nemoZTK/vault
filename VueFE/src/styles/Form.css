@@ -1,0 +1,107 @@
+
+.form-container .footer-slot {
+  margin-top: -1rem;
+  font-size: 1rem; /* Dimensione del testo del footer */
+  text-align: center; /* Allinea il testo al centro */
+  white-space: nowrap;
+  font-weight: bold;
+}
+/* Stili del contenitore del modulo */
+.form-container {/*questo dovrebbe stare sopra*/
+
+  position: absolute;
+  color: var(--menu-title-color);
+  background-color: var(--menu-primary-color);
+  padding: 2rem;
+  backdrop-filter: blur(10px);
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  height:min-content;
+  width: 25%;
+  pointer-events: auto; /* Permette l'interazione */
+  margin: auto;
+  overflow: hidden; /* Assicura che l'effetto hover non esca dal contenitore */
+}
+.form-container h2 {
+  margin-top: -1rem;
+}
+
+form {
+
+  display: flex;
+  flex-direction: column;
+}
+
+input {
+
+  margin-bottom: 0.6rem;
+  padding: 0.75rem;
+  font-size: 1rem;
+  color: var(--menu-title-color);
+  background: var(--menu-bkg-bar-color);
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+input::placeholder {
+  color: var(--menu-placeholder-color);
+}
+
+button {
+  margin-top: 0.6rem;
+  padding: 0.75rem 1.5rem;
+  background: var(--menu-btn-color);
+  border: none;
+  border-radius: 5px;
+  color: var(--menu-font-color);
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+button:hover {
+  background: var(--menu-btn-hover-color);
+}
+@media (max-width: 768px) {
+ 
+  .form-container {
+  
+  max-width: max-content;
+  width: min-content;
+  height: min-content;
+
+
+}
+
+}
+/* Stili specifici per InsertNameForm */
+.alert{
+font-weight: bold;
+}
+.form-container {
+  position: fixed;
+  top: 20%; /* Modifica questa posizione se necessario */
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000; /* Assicurati che sia sopra gli altri elementi */
+  /* Aggiungi ulteriori stili se necessario */
+}
+
+
+.form-container h2 {
+  margin: 0; /* Aggiusta il margine se necessario */
+}
+
+.form-container input {
+  width: 93%; /* Assicurati che l'input si adatti al contenitore */
+}
+
+.form-container button {
+  width: 100%; /* Assicurati che i pulsanti si adattino al contenitore */
+}
+/* Stili specifici per InsertNameForm */
+
+.form-container .footer-slot button {
+  margin-left: 1rem;
+  width: 43%;
+
+}

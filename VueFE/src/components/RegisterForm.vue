@@ -16,6 +16,7 @@
 <script>
 import BaseForm from './BaseForm.vue';
 import axios from '../publicApiClient';
+import '@/styles/Form.css'
 
 export default {
   components: { BaseForm },
@@ -75,8 +76,3 @@ export default {
   }
 };
 </script>
-<style scoped>
-.form-container .footer-slot button {
-  margin-left: 2rem;
-}
-</style>
